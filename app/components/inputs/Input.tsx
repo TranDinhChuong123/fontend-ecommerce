@@ -118,7 +118,7 @@ const Input: React.FC<InputProps> = ({
                     setHasValue(e.target.value.length > 0);
                     if (onChange) onChange(e); // Gọi hàm onChange nếu được truyền vào
                 }}
-                className={`peer w-full p-2 pt-6 h-10
+                className={`peer w-full p-2 pt-3 h-10
                     border-[1.5px] rounded-md transition 
                     outline-none font-light
                     disabled:cursor-not-allowed disabled:opacity-70
@@ -127,12 +127,12 @@ const Input: React.FC<InputProps> = ({
                 `}
             />
             <label
-                className={`absolute top-1 left-2 text-sm cursor-text origin-[0] 
+                className={`absolute top-0 left-2 text-base cursor-text origin-[0] bg-white px-1
                     transition-transform duration-150 transform 
-                    peer-focus:-translate-y-[6px]  
-                    peer-focus:scale-75 
-                    ${hasValue ? 'scale-75 -translate-y-[6px]' : 'scale-100 translate-y-2'}
-                     ${errors[id] ? 'text-rose-500' : 'text-slate-500'}
+                    peer-focus:-translate-y-[12px]
+                    peer-focus:scale-75
+                    ${hasValue ? 'scale-75 -translate-y-[12px] ' : 'scale-100 translate-y-2'}
+                    ${errors[id] ? 'text-rose-500' : 'text-slate-500'}
             `}
                 htmlFor={id}
             >

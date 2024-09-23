@@ -2,6 +2,7 @@ import React from 'react';
 import FormWrap from "../../components/FormWrap";
 import LoginForm from "./RegisterForm";
 import RegisterForm from './RegisterForm';
+import OtpForm from './OtpForm';
 
 const Register = async () => {
   // const currentUser = await getCurrentUser();

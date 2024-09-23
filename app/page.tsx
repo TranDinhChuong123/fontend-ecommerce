@@ -1,34 +1,29 @@
-'use client';
+import { fetchProductsWithFiltersAPI } from "@/services/productService";
+import Container from "./components/Container";
+import HomeBanner from "./components/HomeBanner";
+import ProductCard from "./components/products/ProductCard";
 
-import { useSession } from "next-auth/react";
-import Image from "next/image";
+export default async function Home() {
 
-export default function Home() {
-  const { data: session } = useSession();
-  console.log(session?.user);
-
+  const products = await fetchProductsWithFiltersAPI();
+  console.log("products:", products);
 
   return (
-    <main className="flex h-screen w-screen  flex-row items-center justify-between p-24 ">
-
-      <div className="w-screen h-screen">
-        {session && (
-          <>
-            <p>{session?.user.name}</p>
-            <p>{session?.user.email}</p>
-            <Image
-              src={session?.user.picture || "/default-avatar.png"}
-              alt="User Image"
-              width={50}
-              height={50}
-            />
-            <p>{session?.user.accessToken}</p>
-            <p>{session?.user.refreshToken}</p>
-            <p>iamge {session?.user.picture}</p>
-          </>
-        )}
-      </div>
-
-    </main>
+    <div className="p-8">
+      <Container>
+        <HomeBanner />
+        <div className="grid grid-cols-2 
+            sm:grid-cols-3 
+            lg:grid-cols-4
+            xl:grid-cols-5
+            2xl:grid-cols-6
+            gap-8
+          ">
+          {products.map((product: any) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </Container>
+    </div>
   );
 }

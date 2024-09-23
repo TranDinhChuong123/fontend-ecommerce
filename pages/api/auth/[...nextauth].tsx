@@ -51,7 +51,6 @@ export const authOptions: AuthOptions = {
     callbacks: {
         async session({ session, token, user }) {
             session.user = token as any
-            console.log("<<<session>>>>", session);
             return session;
         },
         async jwt({ token, user, profile, account }) {
@@ -71,14 +70,12 @@ export const authOptions: AuthOptions = {
                         password: token.email,
                         email: token.email,
                         image: token.image || profile?.image || user.image || " unavailable",
-                        role: "USER",
+                        role: "CUSTOMER",
                         authProvider: account?.provider
                     }
                     const { accessToken, refreshToken } = await fetchRegisterUserAPI(dataUser);
 
                     return { ...token, accessToken, refreshToken };
-
-
 
                 }
             }

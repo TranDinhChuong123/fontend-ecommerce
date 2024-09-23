@@ -1,11 +1,9 @@
-import publicAxios from './publicAxios'; // Đổi tên file nếu cần
+import publicAxios from '@/services/axios/publicAxios'; // Đổi tên file nếu cần
 import User from '../types/User';
 
-
-
 export const fetchUserExistsByEmailAPI = async (email: string) => {
-    const resData = await publicAxios.post('/auth/userExists', { email });
-    return resData.data;
+    const { data } = await publicAxios.post('/auth/userExists', { email });
+    return data;
 }
 
 export const fetchRegisterUserAPI = async (user: User) => {
@@ -14,11 +12,11 @@ export const fetchRegisterUserAPI = async (user: User) => {
         username: user.email,
         password: user.password || user.email,
         email: user.email,
-        role: user.role || "USER"
+        role: user.role || "CUSTOMER",
     }
 
-    const resData = await publicAxios.post('/auth/register', user);
-    return resData.data;
+    const { data } = await publicAxios.post('/auth/register', user);
+    return data;
 }
 
 export const fetchloginUserAPI = async (username: string, password: string) => {
@@ -26,17 +24,17 @@ export const fetchloginUserAPI = async (username: string, password: string) => {
         username: username,
         password: password,
     }
-    const resData = await publicAxios.post('/auth/login', loginData);
-    return resData.data;
+    const { data } = await publicAxios.post('/auth/login', loginData);
+    return data;
 }
 
 export const fetchRefreshTokenAPI = async (refreshToken: string) => {
-    const resData = await publicAxios.post('/auth/refresh-token', {}, {
+    const { data } = await publicAxios.post('/auth/refresh-token', {}, {
         headers: {
             'Authorization': `Bearer ${refreshToken}`,
         }
     });
-    return resData.data;
+    return data;
 }
 
 

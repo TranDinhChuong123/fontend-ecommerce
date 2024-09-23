@@ -22,6 +22,7 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    
 
     const {
         reset,
@@ -81,7 +82,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
         <>
             <Heading title="Đăng Nhập EconoMart" />
             {Object.keys(errors).length > 0 && (
-                <p className="text-red-500 text-center mt-2">Vui lòng kiểm tra thông tin</p>
+                <p className="text-red-500 text-center mt-2">Vui lòng kiểm tra thông tin đăng nhập</p>
             )}
             <hr className="bg-slate-200 w-full h-px" />
 
@@ -135,7 +136,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                     onClick={() => signIn('facebook', { callbackUrl: 'http://localhost:3000' })}
                     small
                     outline
-                    colorIcon="text-blue-600"
+                    styleIcon="text-blue-600"
 
                 />
 

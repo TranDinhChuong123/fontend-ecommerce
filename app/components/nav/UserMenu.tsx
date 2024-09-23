@@ -7,11 +7,10 @@ import MenuItem from './MenuItem'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
 import BackDrop from './BackDrop'
-import { SafeUser } from '@/types'
 import { useRouter } from 'next/navigation'
 
 interface UserMenuProps {
-  currentUser: SafeUser | null
+  currentUser: any | null
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
@@ -57,19 +56,19 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
 
               <MenuItem onClick={() => {
                 toggleOpen();
-                signOut({ callbackUrl: '/login' });
+                signOut({ callbackUrl: '/auth/login' });
               }}>
                 Logout
               </MenuItem>
             </div>
           ) : (
             <div>
-              <Link href="/login">
+              <Link href="auth/login">
                 <MenuItem onClick={toggleOpen}>
                   Login
                 </MenuItem>
               </Link>
-              <Link href="/register">
+              <Link href="auth/register">
                 <MenuItem onClick={toggleOpen}>
                   Register
                 </MenuItem>

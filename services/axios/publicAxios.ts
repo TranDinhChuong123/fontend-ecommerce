@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { fetchRefreshTokenAPI } from './authService';
 
-const publicAxios  = axios.create({
+
+const publicAxios = axios.create({
     baseURL: 'http://localhost:8080/api/v1',
-    timeout: 1000,
+    timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -17,7 +17,7 @@ publicAxios.interceptors.response.use(
         return response.data;
     },
     function (error) {
-        return Promise.reject(new Error(error.response.data?.message || error || 'Something went wrong'));
+        return Promise.reject(new Error(error.response.data || error || 'Something went wrong'));
     }
 );
 

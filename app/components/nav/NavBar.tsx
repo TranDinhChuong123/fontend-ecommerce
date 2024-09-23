@@ -4,7 +4,8 @@ import React from 'react'
 import { Redressed } from "next/font/google"
 import CartCount from './CartCount';
 import UserMenu from './UserMenu';
-import getCurrentUser from "@/actions/getCurrentUser";
+import getCurrentUser from '@/actions/getCurrentUser';
+
 
 
 const redressed = Redressed({ subsets: ["latin"], weight: ['400'] });
@@ -18,7 +19,7 @@ const NavBar = async () => {
       <div className='py-3 border-b-[1px]'>
         <Container>
           <div className='flex items-center justify-between gap-3 md:gap-0'>
-            <Link className={`${redressed.className} font-bold text-2xl`} href="/">BeBa-shop</Link>
+            <Link className={`${redressed.className} font-bold text-2xl`} href="/">EconoMart</Link>
             <div className='hidden md:block'>Search</div>
             <div className='flex items-center gap-8 md:gap-12'>
               <CartCount />
