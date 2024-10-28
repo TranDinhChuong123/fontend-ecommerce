@@ -15,7 +15,7 @@ const SetCapacityProduct: React.FC<SetColorProps> = ({
 }) => {
     return (
         <div>
-            <div className="gap-1 items-center">
+            <div className="gap-1 items-center ">
                 <span className="font-semibold mr-2">Dung lượng:</span>
                 <div className="grid grid-cols-3 gap-2">
                     {productVariations.map((productVariation: ProductVariationType) => {

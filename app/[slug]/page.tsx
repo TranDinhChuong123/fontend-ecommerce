@@ -2,6 +2,7 @@ import { fetchProductByIdAPI } from "@/services/productService";
 import ProductDetails from "./ProductDetails";
 import getCurrentUser from "@/actions/getCurrentUser";
 import toast from "react-hot-toast";
+import NavBar from "../components/nav/NavBar";
 
 interface ProductPageProps {
     searchParams: { spid?: string };
@@ -21,8 +22,11 @@ const ProductPage: React.FC<ProductPageProps> = async ({ searchParams }) => {
     }
 
     return (
-        <div className="p-8">
-            <ProductDetails product={product} currentUser={currentUser} />
+        <div >
+            <NavBar />
+            <div className="p-8">
+                <ProductDetails product={product} currentUser={currentUser} />
+            </div>
         </div>
     )
 }

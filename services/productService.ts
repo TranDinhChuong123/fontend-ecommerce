@@ -2,8 +2,10 @@ import publicAxios from '@/services/axios/publicAxios'; // Đổi tên file nế
 import handleApiCall from './handleApiCall';
 
 export const fetchProductsWithFiltersAPI = async () => {
-    return handleApiCall(publicAxios.post('/product', {}));
+    return handleApiCall(publicAxios.post('/product', { page: 1 }));
 }
-export const fetchProductByIdAPI = async (productId: string) => {
-    return handleApiCall(publicAxios.get(`/product/${productId}`)); 
+
+export const fetchProductByIdAPI = async (productId: string): Promise<any> => {
+    return handleApiCall(publicAxios.get(`/product/${productId}`));
 }
+

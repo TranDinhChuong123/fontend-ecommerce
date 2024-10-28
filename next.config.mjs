@@ -8,6 +8,7 @@ const nextConfig = {
                 hostname: '**', // Chấp nhận tất cả domain
             },
         ],
+        domains: ["res.cloudinary.com"],
     },
 };
 

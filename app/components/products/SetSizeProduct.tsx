@@ -17,7 +17,7 @@ const SetSizeProduct: React.FC<SetColorProps> = ({
     return (
         <div>
             <div className="flex gap-1 items-center">
-                <span className="font-semibold mr-5">Dung lượng:</span>
+                <span className="font-semibold mr-5">Size:</span>
                 <div className="grid grid-cols-8">
                     {productVariations.map((productVariation: ProductVariationType) => {
                         return <Button

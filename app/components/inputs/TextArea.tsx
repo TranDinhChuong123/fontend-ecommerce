@@ -8,7 +8,8 @@ interface TextAreaProps {
     disabled?: boolean
     required?: boolean
     register?: UseFormRegister<FieldValues>
-    errors: FieldErrors
+    errors: FieldErrors,
+    placeholder?: string
 }
 
 const TextArea: React.FC<TextAreaProps> = ({
@@ -17,7 +18,8 @@ const TextArea: React.FC<TextAreaProps> = ({
     disabled,
     required,
     register,
-    errors
+    errors,
+    placeholder=" "
 }) => {
     return (
         <div className="w-full relative">
@@ -26,12 +28,13 @@ const TextArea: React.FC<TextAreaProps> = ({
                 id={id}
                 disabled={disabled}
                 {...(register && register(id, { required }))}
-                placeholder=" "
-                className={`peer w-full p-2 pt-6
-                    border-2 rounded-md transition 
-                    outline-none font-light max-h-[150px] min-h-[150px]
+                placeholder={placeholder}
+                className={`peer w-full p-2 pt-2
+                    focus:outline-none
+                    border rounded-md transition 
+                    outline-none font-light max-h-[100px] min-h-[100px]
                     disabled:cursor-not-allowed disabled:opacity-70
-                    ${errors[id] ? 'border-rose-500' : 'border-slate-300'}
+                    ${errors[id] ? 'border-rose-500' : 'border-slate-500'}
                     ${errors[id] ? 'focus:border-rose-500' : 'focus:border-slate-500'}
                 `}
 

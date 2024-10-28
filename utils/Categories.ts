@@ -30,4 +30,5 @@ export const categories = [
         lable: 'Accesories',
         icon: MdOutlineKeyboard
     },
+    
 ]

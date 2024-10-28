@@ -25,10 +25,13 @@ export default function RootLayout({
       <body className={inter.className}>
 
         <Toaster
+          position="top-center"
           toastOptions={{
             style: {
               background: 'rgb(51 65 85)',
-              color: '#fff'
+              marginTop: "70px",
+              color: '#fff',
+      
             }
           }}
         />
@@ -36,7 +39,6 @@ export default function RootLayout({
         <ClientSessionProvider>
           <CartProvider>
             <div className="flex flex-col min-h-screen">
-              <NavBar />
               <main className="flex-grow">{children}</main>
               <Footer />
             </div>

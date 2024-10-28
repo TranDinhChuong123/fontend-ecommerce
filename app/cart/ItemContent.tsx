@@ -5,7 +5,7 @@ import useCart from "@/hooks/useCart"
 import { calculateDiscountedPrice, formatPrice, truncateText } from "@/utils/util"
 import { ProductCart } from "@/types/ProductTypes"
 import SetQuantityCart from "../components/cart/SetQuantityCart"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { Checkbox } from "@mui/material"
 
 
@@ -14,26 +14,53 @@ interface ItemContentProps {
     currentUserId: string,
     selectedItems: string[];
     handleItemSelect: (productId: string) => void;
+    handleSetIsUpdateQuantity: (isUpdateQuantity: boolean) => void;
 }
 
-const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selectedItems, handleItemSelect }) => {
+const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selectedItems, handleItemSelect , handleSetIsUpdateQuantity }) => {
     const {
         handleAddProductToCart,
+        handleUpdateProductQuantity
     } = useCart()
-    const handleQtyChange = useCallback((buyQuantity: number) => {
+
+
+
+
+    const UpdateProductQuantity = (buyQuantity: number) => {
+        handleUpdateProductQuantity({
+            userId: currentUserId,
+            cartProduct: {
+                id: item.id,
+                buyQuantity: buyQuantity
+            }
+        });
+        handleSetIsUpdateQuantity(true)
+    };
+
+    // Hàm xử lý giảm số lượng sản phẩm
+    const handleDecreaseProductQuantity = () => {
         handleAddProductToCart({
             userId: currentUserId,
-            productCart: {
+            cartProduct: {
                 productId: item.productId,
                 selectedVariationId: item.selectedVariationId,
-                buyQuantity: - item.buyQuantity + buyQuantity
+                buyQuantity: -1
             }
-        })
-        console.log(- item.buyQuantity + buyQuantity);
-    }, [item.buyQuantity])
-
-
-
+        });
+        handleSetIsUpdateQuantity(true)
+    };
+    // Hàm xử lý tăng số lượng sản phẩm
+    const handleIncreaseProductQuantity = () => {
+        handleAddProductToCart({
+            userId: currentUserId,
+            cartProduct: {
+                productId: item.productId,
+                selectedVariationId: item.selectedVariationId,
+                buyQuantity: 1
+            }
+        });
+        handleSetIsUpdateQuantity(true)
+    };
 
     return (
         <div className="grid grid-cols-5 text-sm gap-4
@@ -43,23 +70,24 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selected
                 <input
                     type="checkbox"
                     className="w-[16px] h-[16px]"
-                    checked={selectedItems.includes(item.id)}
+                    checked={item.isChecked}
                     onChange={() => handleItemSelect(item.id)}
                 />
 
 
                 <Link href={`/${item.slug}?spid=${item.productId}`}>
-                    <div className="relative w-[70px] aspect-square">
+                    <div className="relative w-[100px] aspect-square">
                         <Image src={item.urlImage} alt={item.id} fill className="object-contain" />
                     </div>
                 </Link>
 
                 <div className="flex flex-col justify-between gap-5">
-                    <Link href={`/${item.slug}?spid=${item.productId}`}>
+                    <Link href={`/${item.slug}?spid=${item.productId}`} className="text-slate-800 font-semibold">
                         {truncateText(item.name)}
                     </Link>
 
-                    <div>{item.color}</div>
+                    <div>Size: {item?.size}</div>
+                    <div>Màu: {item.color}</div>
                 </div>
 
             </div>
@@ -70,27 +98,13 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selected
                 <SetQuantityCart
                     cartCounter={true}
                     productCart={item}
-                    handleQtyChange={handleQtyChange}
-                    handleQtyDecrease={() => handleAddProductToCart({
-                        userId: currentUserId,
-                        productCart: {
-                            productId: item.productId,
-                            selectedVariationId: item.selectedVariationId,
-                            buyQuantity: item.buyQuantity - 1 - item.buyQuantity
-                        }
-                    })}
-                    handleQtyIncrease={() => handleAddProductToCart({
-                        userId: currentUserId,
-                        productCart: {
-                            productId: item.productId,
-                            selectedVariationId: item.selectedVariationId,
-                            buyQuantity: item.buyQuantity + 1 - item.buyQuantity
-                        }
-                    })}
+                    handleQtyChange={UpdateProductQuantity}
+                    handleQtyDecrease={handleDecreaseProductQuantity}
+                    handleQtyIncrease={handleIncreaseProductQuantity}
                 />
             </div>
             <div className="justify-self-end font-semibold">
-                {formatPrice(calculateDiscountedPrice(item.price, item.discountPercent))}
+                {formatPrice(calculateDiscountedPrice(item.price, item.discountPercent)*item.buyQuantity)}
             </div>
         </div>
     )

@@ -1,8 +1,6 @@
 'use client'
-import formatPrice from "@/utils/formatPrice";
 import { truncateText } from "@/utils/util";
 
-import { Rating } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -11,12 +9,10 @@ interface ProductCardProps {
 }
 
 
-
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const router = useRouter();
     // const productRating = data..reduce((acc: number, item: any) =>
     //     item.rating + acc, 0) / data.reviews.length;
-
 
     return (
         // col-span-1: Phần tử sẽ chiếm một cột Các lớp như grid,.
@@ -33,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                  vào lớp của phần tử HTML mà bạn muốn ẩn nội dung tràn ra ngoài: */}
 
                 <div className="w-full relative aspect-square overflow-hidden">
-                    <Image fill src={product.images[0].urlImage} alt={product.name} className="w-full h-full object-contain" />
+                    <Image fill src={product.images[0]?.urlImage||"/public/google-icon.png" } alt={product.name} className="w-full h-full object-contain" />
                 </div>
                 <div className="mt-4 h-9">{truncateText(product.name)}</div>
                 {/* <div>

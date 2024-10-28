@@ -11,6 +11,9 @@ const useRefreshToken = () => {
             const resData = await fetchRefreshTokenAPI(session.user.refreshToken)
             session.user.accessToken = resData.accessToken
             session.user.refreshToken = resData.refreshToken
+            console.log("session.user", session.user);
+            
+            
         }
     }
     return refreshToken

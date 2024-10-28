@@ -1,24 +1,19 @@
-
-import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-
+import { getSession } from "next-auth/react";
 import authAxiosInstance from "@/services/axios/authAxiosInstance";
 import useRefreshToken from "./useRefreshToken";
+
 const useAxiosAuth = () => {
-    const { data: session } = useSession();
     const refreshToken = useRefreshToken();
 
-
-
     useEffect(() => {
-        const requestInterceptor = authAxiosInstance.interceptors.request.use((config) => {
-            if (!config.headers["Authorization"]) {
-                config.headers["Authorization"] = `Bearer ${session?.user.accessToken}`
+        const requestInterceptor = authAxiosInstance.interceptors.request.use(async (config) => {
+            const session = await getSession();
+            if (session?.user?.accessToken) {
+                config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
             }
-            return config
-
+            return config;
         });
-
 
         const responseInterceptor = authAxiosInstance.interceptors.response.use(
             response => response,
@@ -27,29 +22,30 @@ const useAxiosAuth = () => {
                 if (error.response) {
                     if (error.response.status === 401 && !originalRequest._retry) {
                         originalRequest._retry = true;
-                        await refreshToken()
-                        originalRequest.headers["Authorization"] = `Bearer ${session?.user.accessToken}`
+                        await refreshToken(); 
+                        const session = await getSession();
+                        if (session?.user?.accessToken) {
+                            originalRequest.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+                        }
                         return authAxiosInstance(originalRequest);
-
                     }
-                    if (error.response?.status === 403) {
-                        originalRequest.headers["Authorization"] = `Bearer ${session?.user.accessToken}`
-                        return authAxiosInstance(originalRequest);
+                    if (error.response.status === 403) {
+                        console.error("Access forbidden: ", error);
                     }
                 }
 
                 return Promise.reject(error);
             }
-
-        )
-
+        );
+        // Dọn dẹp interceptor khi component unmount
         return () => {
-            authAxiosInstance.interceptors.request.eject(requestInterceptor)
-            authAxiosInstance.interceptors.response.eject(responseInterceptor)
-        }
-    }, [session]);
-    return authAxiosInstance
+            authAxiosInstance.interceptors.request.eject(requestInterceptor);
+            authAxiosInstance.interceptors.response.eject(responseInterceptor);
+        };
+    }, [refreshToken]); // Theo dõi refreshToken
 
+    return authAxiosInstance;
 }
 
-export default useAxiosAuth
+export default useAxiosAuth;
+

@@ -9,5 +9,6 @@ const authAxiosInstance = axios.create({
     }
 });
 
+
 export default authAxiosInstance;
 

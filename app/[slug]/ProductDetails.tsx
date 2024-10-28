@@ -7,7 +7,6 @@ import useCart from "@/hooks/useCart"
 import RenderIf from "@/utils/RenderIf"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
-import { MdCheckCircle } from "react-icons/md"
 import { Rating } from "@mui/material"
 import ProductInfo from "./ProductInfo"
 import { FaCartShopping } from "react-icons/fa6";
@@ -17,11 +16,11 @@ import SetColorProduct from "../components/products/SetColorProduct"
 import SetCapacityProduct from "../components/products/SetCapacityProduct"
 import SetSizeProduct from "../components/products/SetSizeProduct"
 import { CartRequest, DynamicProductType, ProductVariationType } from "@/types/ProductTypes"
-import getCurrentUser from "@/actions/getCurrentUser"
 import AuthForm from "../auth/AuthForm"
 import BackDrop from "../components/nav/BackDrop"
-import FormWrap from "../components/FormWrap"
-import toast from "react-hot-toast"
+import handleApiCall from "@/services/handleApiCall"
+import useAxiosAuth from "@/hooks/useAxiosAuth"
+import { fetchReviewsAPI } from "@/services/reviewService"
 
 interface ProductDetailProps {
   product: any,
@@ -29,21 +28,23 @@ interface ProductDetailProps {
 }
 
 const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) => {
-
-
-  console.log(product);
-
   const router = useRouter();
-  const { handleAddProductToCart } = useCart()
+  const axiosAuth = useAxiosAuth();
+  const { handleAddProductToCart, setCartLength } = useCart()
   const [isOpen, setIsOpen] = useState(false)
-  const [isToastVisible, setIsToastVisible] = useState(false);
-  const toggleOpen = useCallback(() => {
-    setIsOpen((prev) => !prev)
+  const [reviews, setReviews] = useState([])
 
+  useEffect(() => {
+    const getReviews = async () => {
+      const data = await fetchReviewsAPI(product.id)
+      console.log("data", data);
+      
+      setReviews(data || [])
+    }
+    getReviews();
   }, [])
 
-  const [isProductInCart, setIsProductInCart] = useState(false)
-
+  const { handleCartProductsLength } = useCart()
   const [selectedProduct, setSelectedProduct] = useState<DynamicProductType>({
     urlImage: product.images[0].urlImage,
     color: product.images[0].color,
@@ -53,13 +54,17 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
     productVariations: product.productVariations.filter((variation: ProductVariationType) => variation.color === product.images[0].color)
   });
 
+  const toggleOpen = useCallback(() => {
+    setIsOpen((prev) => !prev)
+  }, [])
+
   const handleAddToCart = async () => {
     if (!currentUser) {
       setIsOpen(true)
     } else {
       const cartRequest: CartRequest = {
         userId: currentUser.email,
-        productCart: {
+        cartProduct: {
           productId: product.id,
           selectedVariationId: selectedProduct.selectedVariation.id,
           buyQuantity: selectedProduct.buyQuantity
@@ -70,6 +75,8 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
         showToastError("Số lượng trong kho không đủ")
       } else {
         showToastSuccess("Đã thêm vào Giỏ Hàng");
+        const res = await handleCartProductsLength()
+        setCartLength(res.data || 0)
       }
     }
   }
@@ -110,9 +117,9 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
 
 
 
-  const productRating = selectedProduct.selectedVariation.reviews.length > 0
-    ? selectedProduct.selectedVariation.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) / selectedProduct.selectedVariation.reviews.length
-    : 0; // Nếu không có review, trả về 0
+  // const productRating = selectedProduct.selectedVariation.reviews.length > 0
+  //   ? selectedProduct.selectedVariation.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) / selectedProduct.selectedVariation.reviews.length
+  //   : 0; // Nếu không có review, trả về 0
 
   const handleQtyDecrease = useCallback(() => {
     if (selectedProduct.buyQuantity === 1) return;
@@ -129,11 +136,6 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
   }, [selectedProduct.buyQuantity])
 
   const handleQtyChange = useCallback((buyQuantity: number) => {
-    // if (selectedProduct.buyQuantity > selectedProduct.selectedVariation.quantity) {
-    //   setSelectedProduct((prev) => {
-    //     return { ...prev, buyQuantity: selectedProduct.selectedVariation.quantity }
-    //   })
-    // };
     setSelectedProduct((prev) => {
       return { ...prev, buyQuantity: buyQuantity }
     })
@@ -158,9 +160,9 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
           selectedProduct={selectedProduct}
         />
 
-        <div className="flex flex-col gap-1 text-slate-700 text-sm">
+        <div className="flex flex-col gap-3 text-slate-700 text-sm">
 
-          <h2 className="text-3xl font-medium text-slate-700 mb-4">{product.name}</h2>
+          <h2 className="text-2xl font-medium text-slate-700 mb-2">{product.name}</h2>
           <div className="flex items-center gap-4">
 
             <span className="text-xl font-medium">
@@ -188,20 +190,20 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
             <span className="text-md font-medium">
               Đánh giá:
             </span>
-            <Rating value={productRating} precision={0.5} readOnly />
+            <Rating value={5} precision={0.5} readOnly />
 
-            <div>({selectedProduct.selectedVariation.reviews.length})</div>
+            <div>(5)</div>
 
             <div>Đã Bán {selectedProduct.selectedVariation.soldQuantity}</div>
           </div>
 
-          <Horizontal />
+
 
           <>
-            <p className="flex mb-2 gap-1 text-center text-slate-500">
+            {/* <p className="flex mb-2 gap-1 text-center text-slate-500">
               <MdCheckCircle className="text-teal-400" size={20} />
               <span>Thêm vào giỏ hàng</span>
-            </p>
+            </p> */}
           </>
 
 
@@ -214,7 +216,7 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
             />
 
 
-            <Horizontal />
+
 
             <RenderIf isTrue={product.productVariations[0].capacity}>
               <SetCapacityProduct
@@ -245,15 +247,12 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
                 {selectedProduct.selectedVariation.quantity ? `${selectedProduct.selectedVariation.quantity} sản phẩm có sẳn` : "Hết hàng sản phẩm"}
               </div>
             </div>
-
-
-            <Horizontal />
             <div className="max-w-[300px]">
               <Button
                 icon={FaCartShopping}
                 styleIcon="text-white"
                 rounded
-                label="Add to cart"
+                label="Thêm Vào Giỏ Hàng"
                 onClick={handleAddToCart}
               />
             </div>
@@ -264,9 +263,10 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
           <AuthForm onClose={toggleOpen} />
         </RenderIf>
       </div >
+
       <ProductInfo
         description={product?.description || ''}
-        reviews={selectedProduct.selectedVariation.reviews}
+        reviews={reviews}
       />
 
 

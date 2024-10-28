@@ -16,14 +16,14 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
 
 }) => {
     return (
-        <div className={`flex flex-col gap-2 items-center cursor-pointer
-                border-2 rounded-xl p-4 transition hover:border-slate-500
+        <div className={`flex flex-col gap-1 items-center cursor-pointer h-[70px] w-[100px]
+                border-2 rounded-xl p-2 transition hover:border-slate-500
                 ${selected ? 'border-slate-500' : 'border-slate-200'}
             `}
             onClick={() => onClick(label)}
         >
 
-            <Icon size={30} />
+            <Icon size={20} />
             <div className="font-normal">
                 {label}
             </div>

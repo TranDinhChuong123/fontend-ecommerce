@@ -7,6 +7,7 @@ export const fetchUserExistsByEmailAPI = async (email: string) => {
 }
 
 export const fetchRegisterUserAPI = async (user: User) => {
+
     const registerData = {
         name: user.name,
         username: user.email,

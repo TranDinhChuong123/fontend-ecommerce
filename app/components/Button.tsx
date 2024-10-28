@@ -55,7 +55,7 @@ const Button: React.FC<ButtonProps> = ({
           alt={imageIcon.alt}
           width={22}    // Đặt kích thước cho hình ảnh
           height={22}   // Đặt kích thước cho hình ảnh
-          className={`${styleIcon} object-contain`}
+          className={`${styleIcon ? styleIcon : "text-white"} object-contain`}
         />
       )}
       {label}

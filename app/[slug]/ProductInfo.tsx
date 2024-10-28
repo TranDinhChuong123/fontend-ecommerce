@@ -14,25 +14,27 @@ interface ProductInfoProps {
 const ProductInfo: React.FC<ProductInfoProps> = ({ description, reviews }) => {
     const [activeTab, setActiveTab] = useState<'comments' | 'description'>('comments');
     return (
-        <div className="flex flex-col mt-5 gap-4 w-full">
+        <div className="flex flex-col mt-10 gap-4 w-full border-2 rounded-lg">
             <div className="mx-10 rounded-lg p-10">
                 <div className="flex gap-4 items-center justify-start w-1/3 pb-10 ">
-                    <Button
-                        label="Bình luận"
+                    <button
                         onClick={() => setActiveTab('comments')}
-                        outline
-                        rounded
-                        custom={activeTab === 'comments' ? 'bg-gray-700 text-white' : ''}
-
-                    />
-                    <Button
-                        label="Mô tả"
+                        className={`
+                            border-slate-500 py-2 px-5 rounded-full 
+                            ${activeTab === 'comments' ? 'bg-blue-500 text-white' : ' border'}
+                            `}
+                    >
+                        Đánh giá sản phẩm
+                    </button>
+                    <button
                         onClick={() => setActiveTab('description')}
-                        outline
-                        rounded
-                        custom={activeTab === 'description' ? 'bg-gray-700 text-white' : ''}
-
-                    />
+                        className={`
+                            border-slate-500 py-2 px-5 rounded-full 
+                            ${activeTab === 'description' ? 'bg-blue-500 text-white' : ' border'}
+                            `}
+                    >
+                        Mô tả
+                    </button>
                 </div>
 
                 <RenderIf isTrue={activeTab === 'comments'}>

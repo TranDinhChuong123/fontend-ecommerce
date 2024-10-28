@@ -18,13 +18,13 @@ const ProductImage: React.FC<ProductImageProps> = ({ selectedProduct, product, h
     return (
         <div className="grid grid-cols-6 gap-2 h-full
             min-h-[100px] 
-            max-h-[300px]
+            max-h-[420px]
             sm:min-h-[200px]
         ">
             <div className=" flex flex-col w-full items-center 
              justify-center gap-4 cursor-pointer border h-full 
                 min-h-[100px] 
-                max-h-[300px]
+                max-h-[420px]
                 sm:min-h-[200px]
             ">
 

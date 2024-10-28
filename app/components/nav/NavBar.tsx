@@ -5,28 +5,56 @@ import { Redressed } from "next/font/google"
 import CartCount from './CartCount';
 import UserMenu from './UserMenu';
 import getCurrentUser from '@/actions/getCurrentUser';
-
-
-
 const redressed = Redressed({ subsets: ["latin"], weight: ['400'] });
-
-const NavBar = async () => {
+import { FcShop } from "react-icons/fc";
+import RenderIf from '@/utils/RenderIf';
+import { CiSearch } from "react-icons/ci";
+interface Props {
+  label?: string;
+  sticky?: boolean;
+  notIsCart?: boolean
+}
+const NavBar: React.FC<Props> = async ({ label, sticky = false, notIsCart = false }) => {
 
   const currentUser = await getCurrentUser()
 
   return (
-    <div className='sticky top-0 w-full bg-slate-200 z-30 shadow-sm'>
-      <div className='py-3 border-b-[1px]'>
-        <Container>
+    <div className={` top-0 w-full z-30 shadow-sm text-slate-700 ${sticky ? 'sticky' : null}`}>
+      <div className='py-5 border-b-[1px]'>
+        <div
+          className={` max-w-[1920px] 
+            px-0
+            mx-auto 
+            xl:px-20
+            md:px-0
+            `}
+        >
           <div className='flex items-center justify-between gap-3 md:gap-0'>
-            <Link className={`${redressed.className} font-bold text-2xl`} href="/">EconoMart</Link>
-            <div className='hidden md:block'>Search</div>
+
+            <div className='flex flex-row gap-5 items-center'>
+              <Link className={`${redressed.className} font-bold text-2xl flex flex-row gap-2 items-center`} href="/">
+                <FcShop className='text-sky-500' size={44} />
+                EconoMart
+              </Link>
+              <div className='text-xl border-l-[1px] border-slate-500 px-5'>{label}</div>
+            </div>
+
+            <div className=' flex flex-row items-center gap-1 border rounded-full pl-2'>
+              <CiSearch size={24}/>
+              <input type="text" className='focus:outline-none w-[300px] rounded-full px-4 py-2' />
+              <button className='bg-teal-700 text-white px-3 py-2 rounded-r-full font-light'>
+
+                Tìm kiếm
+              </button>
+            </div>
             <div className='flex items-center gap-8 md:gap-12'>
-              <CartCount />
+              <RenderIf isTrue={!notIsCart}>
+                <CartCount />
+              </RenderIf>
               <UserMenu currentUser={currentUser} />
             </div>
           </div>
-        </Container>
+        </div>
 
       </div>
     </div>

@@ -15,12 +15,11 @@ const Avatar: React.FC<AvatarProps> = ({ src }) => {
       />
     )
 
+  }else{
+    return <FaUserCircle size={28} className="text-slate-500"/>
   };
 
-  return (
-    <FaUserCircle size={24} />
 
-  )
 }
 
 export default Avatar
