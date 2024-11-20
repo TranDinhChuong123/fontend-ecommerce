@@ -36,13 +36,16 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
   const [reviews, setReviews] = useState([])
 
 
-  const fetchProductStock = async () => {
-    const response = await handleApiCall(axios.get(`/inventory/${product.id}`));
-    console.log('response', response);
-  }
-  useEffect(() => {
-    fetchProductStock();
-  }, [])
+  // const fetchProductStock = useCallback(async () => {
+  //   const response = await handleApiCall(axios.get(`/inventory/${product.id}`));
+  //   console.log('response', response);
+  // }, [axios, product.id]); 
+
+  // useEffect(() => {
+  //   fetchProductStock();
+  // }, [fetchProductStock]);
+
+
 
   useEffect(() => {
     const getReviews = async () => {
