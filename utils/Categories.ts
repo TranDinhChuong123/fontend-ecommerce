@@ -3,32 +3,23 @@ import { MdOutlineKeyboard, MdStorefront, MdWatch } from "react-icons/md";
 import { HiOutlineTv } from "react-icons/hi2";
 export const categories = [
     {
-        lable: 'All',
-        icon: MdStorefront
+        lable: 'Điện thoại',
+        icon: AiFillPhone,
+        slug: 'dien-thoai-smartphone'
     },
     {
-        lable: 'Phone',
-        icon: AiFillPhone
+        lable: 'Thời trang nam',
+        icon: AiOutlineLaptop,
+        slug: 'thoi-trang-nam'
     },
     {
-        lable: 'LapTop',
-        icon: AiOutlineLaptop
+        lable: 'Điện gia dụng',
+        icon: AiOutlineDesktop,
+        slug: 'dien-gia-dung'
     },
     {
-        lable: 'Desktop',
-        icon: AiOutlineDesktop
-    },
-    {
-        lable: 'TV',
-        icon: HiOutlineTv
-    },
-    {
-        lable: 'Watch',
-        icon: MdWatch
-    },
-    {
-        lable: 'Accesories',
-        icon: MdOutlineKeyboard
-    },
-    
+        lable: 'Giày thể thao',
+        icon: HiOutlineTv,
+        slug: 'giay-the-thao'
+    }, 
 ]

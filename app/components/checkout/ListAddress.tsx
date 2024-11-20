@@ -8,14 +8,15 @@ import useAxiosAuth from "@/hooks/useAxiosAuth";
 import { showToastError, showToastSuccess, truncateText } from "@/utils/util";
 import AddressForm from "../cart/AddressForm";
 import { AddressType } from "@/types/ProductTypes";
+import { useSession } from "next-auth/react";
+import useCurrentUser from "@/actions/useCurrentUser ";
 
 interface AuthFormProps {
     onClose: () => void;
-    email: string;
     updateDefaultAddress: (success: boolean) => void;
 }
 
-const ListAddress: React.FC<AuthFormProps> = ({ onClose, email, updateDefaultAddress }) => {
+const ListAddress: React.FC<AuthFormProps> = ({ onClose, updateDefaultAddress }) => {
     const router = useRouter();
     const [zIndex, setZIndex] = useState(50);
     const [ListAddress, setListAddress] = useState([]);
@@ -24,7 +25,8 @@ const ListAddress: React.FC<AuthFormProps> = ({ onClose, email, updateDefaultAdd
     const [isShowForm, setIsShowForm] = useState(false);
     const [isFormSuccess, setIsFormSuccess] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<AddressType | null>(null);
-    const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null); //
+    const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null);
+    const currentUser = useCurrentUser();
     const toggleForm = (address?: any) => {
         setSelectedAddress(address);
         setIsShowForm(prev => !prev);
@@ -32,7 +34,7 @@ const ListAddress: React.FC<AuthFormProps> = ({ onClose, email, updateDefaultAdd
 
     useEffect(() => {
         const getListAddress = async () => {
-            const resData = await handleApiCall(axios.get(`/user/${email}/addresses`));
+            const resData = await handleApiCall(axios.get(`/user/addresses`));
             if (!resData) showToastError("List address empty");
             setListAddress(resData.data || []);
             const defaultAddress = resData.data.find((addr: AddressType) => addr.state);
@@ -43,13 +45,13 @@ const ListAddress: React.FC<AuthFormProps> = ({ onClose, email, updateDefaultAdd
             }
         };
         getListAddress();
-    }, [axios, email]);
+    }, [axios]);
 
     useEffect(() => {
         if (isFormSuccess) {
             setIsShowForm(false);
             const updateListAddress = async () => {
-                const resData = await handleApiCall(axios.get(`/user/${email}/addresses`));
+                const resData = await handleApiCall(axios.get(`/user/addresses`));
                 if (!resData) showToastError("List address empty");
                 setListAddress(resData.data || []);
                 setIsFormSuccess(false);
@@ -57,11 +59,11 @@ const ListAddress: React.FC<AuthFormProps> = ({ onClose, email, updateDefaultAdd
             };
             updateListAddress();
         }
-    }, [isFormSuccess, email, axios]);
+    }, [isFormSuccess, axios]);
 
     const handleConfirm = async () => {
         if (selectedAddress && selectedAddress.id !== defaultAddressId) {
-            const resData = await handleApiCall(axios.get(`/user/${email}/addresses/${selectedAddress.id}/set-default`));
+            const resData = await handleApiCall(axios.get(`/user/address/${selectedAddress.id}/set-default`));
             console.log("resData", resData);
             if (!resData) showToastError("Set default address failed");
             showToastSuccess("Đặt địa chỉ mặc định thành công");
@@ -88,7 +90,7 @@ const ListAddress: React.FC<AuthFormProps> = ({ onClose, email, updateDefaultAdd
             <AddressForm
                 setIsFormSuccess={setIsFormSuccess}
                 onClose={() => setIsShowForm(false)}
-                email={email}
+                email={currentUser || ""}
                 address={selectedAddress}
             />
         );

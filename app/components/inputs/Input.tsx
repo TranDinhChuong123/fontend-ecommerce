@@ -42,7 +42,7 @@ const Input: React.FC<InputProps> = ({
             <input
                 id={id}
                 disabled={disabled}
-                autoComplete="off"
+                autoComplete="on"
                 placeholder=" "
                 defaultValue={value}
                 type={type}
@@ -64,7 +64,7 @@ const Input: React.FC<InputProps> = ({
                 `}
             />
             <label
-                className={`absolute top-[2px] left-2 text-md font-light cursor-text origin-[0] bg-white px-1
+                className={`absolute top-[2px] left-2 text-md font-light cursor-text origin-[0] bg-white px-1 rounded-lg
                     transition-transform duration-150 transform 
                     peer-focus:-translate-y-[11px]
                     peer-focus:scale-75

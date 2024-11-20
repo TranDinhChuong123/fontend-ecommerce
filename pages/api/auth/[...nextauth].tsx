@@ -24,17 +24,19 @@ export const authOptions: AuthOptions = {
         CredentialsProvider({
             name: 'credentials',
             credentials: {
-                phoneNumber: { label: "PhoneNumber", type: "text" },
-                password: { label: "Password", type: "password" }
+                email: { label: "email", type: "text" },
+                password: { label: "password", type: "password" }
             },
             async authorize(credentials) {
-                if (!credentials?.phoneNumber || !credentials?.password) {
+                if (!credentials?.email || !credentials?.password) {
                     throw new Error("Invalid email or password");
                 }
-                const resData = await fetchloginUserAPI(credentials.phoneNumber, credentials.password);
+                const resData = await fetchloginUserAPI(credentials.email, credentials.password);
                 if (!resData) {
                     throw new Error("Invalid phoneNumber or password");
                 }
+                console.log("resData", resData);
+                
                 return resData;
             }
         })

@@ -16,11 +16,12 @@ import SetColorProduct from "../components/products/SetColorProduct"
 import SetCapacityProduct from "../components/products/SetCapacityProduct"
 import SetSizeProduct from "../components/products/SetSizeProduct"
 import { CartRequest, DynamicProductType, ProductVariationType } from "@/types/ProductTypes"
-import AuthForm from "../auth/AuthForm"
+import AuthForm from "../components/auth/AuthForm"
 import BackDrop from "../components/nav/BackDrop"
-import handleApiCall from "@/services/handleApiCall"
 import useAxiosAuth from "@/hooks/useAxiosAuth"
 import { fetchReviewsAPI } from "@/services/reviewService"
+import { FaBagShopping } from "react-icons/fa6";
+import handleApiCall from "@/services/handleApiCall"
 
 interface ProductDetailProps {
   product: any,
@@ -29,20 +30,28 @@ interface ProductDetailProps {
 
 const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) => {
   const router = useRouter();
-  const axiosAuth = useAxiosAuth();
-  const { handleAddProductToCart, setCartLength } = useCart()
+  const axios = useAxiosAuth();
+  const { handleAddProductBuyNow, handleAddProductToCart, setCartLength } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [reviews, setReviews] = useState([])
+
+
+  const fetchProductStock = async () => {
+    const response = await handleApiCall(axios.get(`/inventory/${product.id}`));
+    console.log('response', response);
+  }
+  useEffect(() => {
+    fetchProductStock();
+  }, [])
 
   useEffect(() => {
     const getReviews = async () => {
       const data = await fetchReviewsAPI(product.id)
-      console.log("data", data);
-      
       setReviews(data || [])
     }
     getReviews();
   }, [])
+
 
   const { handleCartProductsLength } = useCart()
   const [selectedProduct, setSelectedProduct] = useState<DynamicProductType>({
@@ -50,9 +59,11 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
     color: product.images[0].color,
     buyQuantity: 1,
     price_new: calculateDiscountedPrice(product.productVariations[0].price, product.productVariations[0].discountPercent),
-    selectedVariation: product.productVariations.find((variation: ProductVariationType) => variation.color === product.images[0].color),
-    productVariations: product.productVariations.filter((variation: ProductVariationType) => variation.color === product.images[0].color)
+    selectedVariation: product.productVariations.find((variation: ProductVariationType) => variation.color === product.images[0].color) || product.productVariations[0],
+    productVariations: product.productVariations.filter((variation: ProductVariationType) => variation.color === product.images[0].color),
   });
+
+
 
   const toggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev)
@@ -81,6 +92,31 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
     }
   }
 
+  const handleBuyNow = async () => {
+    if (!currentUser) {
+      setIsOpen(true)
+    } else {
+      const cartRequest: CartRequest = {
+        userId: currentUser.email,
+        cartProduct: {
+          productId: product.id,
+          selectedVariationId: selectedProduct.selectedVariation.id,
+          buyQuantity: selectedProduct.buyQuantity
+        }
+      }
+      const booleanData = await handleAddProductBuyNow(cartRequest)
+
+      if (!booleanData) {
+        showToastError("Số lượng trong kho không đủ")
+      } else {
+        showToastSuccess("Đã thêm vào Giỏ Hàng");
+        router.push('/cart')
+      }
+
+    }
+  }
+
+
   const handleColorProduct = useCallback((color: string, url: string, productVariations: ProductVariationType[]) => {
     setSelectedProduct((prev) => {
 
@@ -97,7 +133,7 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
         ...prev,
         color: color,
         urlImage: url,
-        price_new: calculateDiscountedPrice(selectedVariation.price, selectedVariation.discountPercent),
+        price_new: calculateDiscountedPrice(selectedVariation?.price, selectedVariation?.discountPercent),
         selectedVariation: selectedVariation,
         productVariations: productVariations
       }
@@ -116,10 +152,6 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
   }, [selectedProduct.selectedVariation])
 
 
-
-  // const productRating = selectedProduct.selectedVariation.reviews.length > 0
-  //   ? selectedProduct.selectedVariation.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) / selectedProduct.selectedVariation.reviews.length
-  //   : 0; // Nếu không có review, trả về 0
 
   const handleQtyDecrease = useCallback(() => {
     if (selectedProduct.buyQuantity === 1) return;
@@ -140,6 +172,8 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
       return { ...prev, buyQuantity: buyQuantity }
     })
   }, [selectedProduct.buyQuantity])
+
+  console.log("selectedProduct", selectedProduct);
 
   return (
     <div className="z-30">
@@ -174,11 +208,11 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
             <span className="text-base font-normal line-through 
             text-[#6b7280]
           ">
-              {formatPrice(selectedProduct.selectedVariation.price)}
+              {formatPrice(selectedProduct?.selectedVariation?.price)}
             </span>
 
             <span className="text-sm font-medium text-[#4f47e6]">
-              {formatDiscountPercent(selectedProduct.selectedVariation.discountPercent)}
+              {formatDiscountPercent(selectedProduct?.selectedVariation?.discountPercent)}
             </span>
 
 
@@ -194,7 +228,10 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
 
             <div>(5)</div>
 
-            <div>Đã Bán {selectedProduct.selectedVariation.soldQuantity}</div>
+
+            <div>Đã Bán {selectedProduct?.selectedVariation?.soldQuantity}</div>
+
+
           </div>
 
 
@@ -205,18 +242,23 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
               <span>Thêm vào giỏ hàng</span>
             </p> */}
           </>
+          <RenderIf isTrue={product?.brand}>
+            <div className="flex items-center gap-2 pb-2 ">
+              Nhãn hàng:  <p className="font-medium">{product?.brand}</p>
+            </div>
+          </RenderIf>
+
 
 
 
           <>
-            <SetColorProduct
-              selectedProduct={selectedProduct}
-              product={product}
-              handleColorProduct={handleColorProduct}
-            />
-
-
-
+            <RenderIf isTrue={product.productVariations[0].color}>
+              <SetColorProduct
+                selectedProduct={selectedProduct}
+                product={product}
+                handleColorProduct={handleColorProduct}
+              />
+            </RenderIf>
 
             <RenderIf isTrue={product.productVariations[0].capacity}>
               <SetCapacityProduct
@@ -226,10 +268,18 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
               />
             </RenderIf>
 
-            <RenderIf isTrue={product.productVariations[0].size}>
+            <RenderIf isTrue={product.productVariations[0].size && product.productVariations[0].color}>
               <SetSizeProduct
                 selectedProduct={selectedProduct}
                 productVariations={selectedProduct.productVariations}
+                handleSizeProduct={handleSelectedVariation}
+              />
+            </RenderIf>
+
+            <RenderIf isTrue={product.productVariations[0].size && !product.productVariations[0].color}>
+              <SetSizeProduct
+                selectedProduct={selectedProduct}
+                productVariations={product.productVariations}
                 handleSizeProduct={handleSelectedVariation}
               />
             </RenderIf>
@@ -243,18 +293,30 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
                 handleQtyIncrease={handleQtyIncrease}
                 handleQtyChange={handleQtyChange}
               />
-              <div className={selectedProduct.selectedVariation.quantity ? "text-teal-400 py-4 font-semibold" : "text-rose-400"}>
-                {selectedProduct.selectedVariation.quantity ? `${selectedProduct.selectedVariation.quantity} sản phẩm có sẳn` : "Hết hàng sản phẩm"}
+              <div className={selectedProduct?.selectedVariation?.quantity ? "text-teal-400 py-4 font-semibold" : "text-rose-400"}>
+                {selectedProduct?.selectedVariation?.quantity ? `${selectedProduct?.selectedVariation?.quantity} sản phẩm có sẳn` : "Hết hàng sản phẩm"}
               </div>
             </div>
-            <div className="max-w-[300px]">
-              <Button
-                icon={FaCartShopping}
-                styleIcon="text-white"
-                rounded
-                label="Thêm Vào Giỏ Hàng"
-                onClick={handleAddToCart}
-              />
+            <div className="flex flex-row gap-3 w-[500px]">
+              <div className="w-[200px]">
+                <Button
+                  icon={FaCartShopping}
+                  styleIcon="text-slate-700"
+                  outline
+                  label="Thêm Vào Giỏ Hàng"
+                  onClick={handleAddToCart}
+                />
+              </div>
+
+              <div className="w-[200px]">
+                <Button
+                  icon={FaBagShopping}
+                  styleIcon="text-white"
+                  label="Mua ngay"
+                  onClick={handleBuyNow}
+                />
+              </div>
+
             </div>
           </>
         </div>

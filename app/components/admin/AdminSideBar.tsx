@@ -6,20 +6,34 @@ import { useEffect, useState } from "react";
 import { IoChevronUp } from "react-icons/io5";
 import { IoChevronDown } from "react-icons/io5";
 import { IoHomeOutline } from "react-icons/io5";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
 const AdminSideBar = () => {
+    const pathname = usePathname() || '/';
+    const lastPathSegment = pathname.split('/').pop() || 'dashboard';
     const router = useRouter();
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedSidebarItem, setSelectedSidebarItem] = useState('dashboard');
+    const [isOpenMangePropducts, setIsOpenMangePropducts] = useState(false);
+    const [isOpenMangeInventory, setIsOpenMangeInventory] = useState(false);
+    const [selectedSidebarItem, setSelectedSidebarItem] = useState(lastPathSegment);
     const [selectedItemDropDown, setSelectedItemDropDown] = useState('');
-    const toggleDropdown = () => {
+    const toggleDropdownMProducts = () => {
         setSelectedSidebarItem('ManageProduct');
-        setIsOpen(!isOpen);
+        setIsOpenMangePropducts(!isOpenMangePropducts);
+    };
+
+    const toggleDropdownMInventory= () => {
+        setSelectedSidebarItem('ManageInventory');
+        setIsOpenMangeInventory(!isOpenMangeInventory);
     };
     useEffect(() => {
         if (selectedSidebarItem !== 'ManageProduct') {
-            setIsOpen(false);
+            setIsOpenMangePropducts(false);
             setSelectedItemDropDown('')
+        }
+        if(lastPathSegment === 'add-product'){
+            setIsOpenMangePropducts(true)
+            setSelectedItemDropDown('add-product')
+            setSelectedSidebarItem('ManageProduct')
         }
     }, [selectedSidebarItem]);
 
@@ -59,33 +73,33 @@ const AdminSideBar = () => {
                 <button
                     className={`${selectedSidebarItem === 'ManageProduct' ? 'bg-[#425270] text-white' : null} flex items-center justify-between w-full px-5 py-2 rounded-sm`}
 
-                    onClick={toggleDropdown}
+                    onClick={toggleDropdownMProducts}
                 >
                     <div className="flex items-center gap-1">
                         <RxDashboard className="mr-2" size={25} />
                         <span>Quản lý sản phẩm</span>
                     </div>
 
-                    {isOpen ? <IoChevronUp size={17} /> : <IoChevronDown size={17} />}
+                    {isOpenMangePropducts ? <IoChevronUp size={17} /> : <IoChevronDown size={17} />}
 
 
                 </button>
-                {isOpen && (
+                {isOpenMangePropducts && (
                     <div
                         className=" text-[#8b9ab0] bg-slate-200 w-full flex flex-col gap-1 items-start pl-14"
                     >
                         <button
-                            onClick={() => handleItemDropDownClick("add-product")} 
+                            onClick={() => handleItemDropDownClick("add-product")}
                             className={`${selectedItemDropDown === 'add-product' ? 'text-blue-500' : ''} block py-1`}
                         >
                             Thêm sản phẩm
                         </button>
 
                         <button
-                            onClick={() => handleItemDropDownClick("list-product")} 
+                            onClick={() => handleItemDropDownClick("list-product")}
                             className={`${selectedItemDropDown === 'list-product' ? 'text-blue-500' : ''} block py-1`}
                         >
-                            Danh sách sản phẩm 
+                            Danh sách sản phẩm
                         </button>
 
 
@@ -93,6 +107,70 @@ const AdminSideBar = () => {
                         <a href="#" className="py-1">Settings</a>
                     </div>
                 )}
+            </div>
+
+            <div className="w-full">
+                <button
+                    className={`${selectedSidebarItem === 'ManageInventory' ? 'bg-[#425270] text-white' : null} flex items-center justify-between w-full px-5 py-2 rounded-sm`}
+
+                    onClick={toggleDropdownMInventory}
+                >
+                    <div className="flex items-center gap-1">
+                        <RxDashboard className="mr-2" size={25} />
+                        <span>Quản lý kho hàng</span>
+                    </div>
+
+                    {isOpenMangePropducts ? <IoChevronUp size={17} /> : <IoChevronDown size={17} />}
+
+
+                </button>
+                {isOpenMangeInventory && (
+                    <div
+                        className=" text-[#8b9ab0] bg-slate-200 w-full flex flex-col gap-1 items-start pl-14"
+                    >
+                        <button
+                            onClick={() => handleItemDropDownClick("inventory")}
+                            className={`${selectedItemDropDown === 'inventory' ? 'text-blue-500' : ''} block py-1`}
+                        >
+                            Kho hàng
+                        </button>
+
+                        <button
+                            onClick={() => handleItemDropDownClick("product-draft")}
+                            className={`${selectedItemDropDown === 'product-draft' ? 'text-blue-500' : ''} block py-1`}
+                        >
+                            Sản phẩm mẫu
+                        </button>
+
+
+ 
+                    </div>
+                )}
+            </div>
+            <div className="w-full">
+                <button
+                    className={`${selectedSidebarItem === 'supplier' ? 'bg-[#425270] text-white' : null} flex items-center justify-between w-full px-5 py-2 rounded-sm`}
+                    onClick={() => handleItemClick('supplier')}
+                >
+                    <div className="flex items-center gap-1">
+                        <IoHomeOutline className="mr-2" size={25} />
+                        <span>Quản lý nhà cung cấp</span>
+                    </div>
+                </button>
+
+            </div>
+
+            <div className="w-full">
+                <button
+                    className={`${selectedSidebarItem === 'user' ? 'bg-[#425270] text-white' : null} flex items-center justify-between w-full px-5 py-2 rounded-sm`}
+                    onClick={() => handleItemClick('user')}
+                >
+                    <div className="flex items-center gap-1">
+                        <IoHomeOutline className="mr-2" size={25} />
+                        <span>Quản lý nhà người dùng</span>
+                    </div>
+                </button>
+
             </div>
         </div>
     )

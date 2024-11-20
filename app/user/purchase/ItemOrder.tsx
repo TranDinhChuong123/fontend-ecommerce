@@ -31,33 +31,40 @@ const ItemOrder: React.FC<ItemContentProps> = ({ item, completed = false }) => {
         "
 
         >
-            <div className="relative w-[100px] aspect-square"
+            <div className="relative w-[200px] aspect-square "
                 onClick={() => router.push(`/${createSlug(item.name)}/?spid=${item.productId}`)}
             >
                 <Image src={item.urlImage}
                     alt={item.id}
                     fill
-                    className="object-contain" />
+                    className="object-contain bg-cover" />
             </div>
-            <div className="relative flex flex-col justify-between gap-3 py-2 w-full"
-                onClick={() => router.push(`/${createSlug(item.name)}/?spid=${item.productId}`)}
+            <Link className="relative flex flex-col justify-between gap-3 py-2 w-[100%]"
+                href={`/${createSlug(item.name)}/?spid=${item.productId}`}
+                // onClick={() => router.push(`/${createSlug(item.name)}/?spid=${item.productId}`)}
             >
                 <p className="text-slate-900 w-[75%] ">{item.name}</p>
 
                 <div className="flex flex-row gap-20">
-                    <div className="text-slate-800  w-[30%]">Màu: {item.color}</div>
-                    <div className="text-slate-800 ">Size: {item?.size}</div>
+                    <RenderIf isTrue={!!item.color}>
+                        <div className="text-slate-800  w-[30%]">Màu: {item.color}</div>
+                    </RenderIf>
+                    <RenderIf isTrue={!!item.size}>
+                        <div className="text-slate-800 ">Size: {item?.size}</div>
+
+                    </RenderIf>
+
 
                 </div>
                 <div className="absolute right-[5%] bottom-[50%]">x{item.buyQuantity}</div>
 
-                <div className="absolute flex flex-row gap-10 right-0 bottom-0 pr-5">
+                <div className="absolute flex flex-row gap-10 right-0 bottom-0 pr-0">
 
                     <div className="line-through text-gray-400">{formatPrice(item.price)} </div>
                     <div className="text-red-600">{formatPrice(calculateDiscountedPrice(item.price, item.discountPercent))} </div>
                 </div>
 
-            </div>
+            </Link>
 
             <div className="w-[120px] flex flex-row items-center">
                 <RenderIf isTrue={completed}>

@@ -15,7 +15,6 @@ const OrderDetailPage: React.FC<Props> = ({ searchParams }) => {
 
     return (
         <div>
-            <NavBar />
             <OrderDetailReturn orderId={searchParams.orid || ''} />
         </div>
     )

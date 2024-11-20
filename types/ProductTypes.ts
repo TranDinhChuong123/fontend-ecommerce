@@ -41,6 +41,7 @@ export type CartProduct = {
     productId: string,
     selectedVariationId: string,
     buyQuantity: number
+    isChecked?: boolean
 }
 
 export type CartRequest = {

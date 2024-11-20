@@ -2,19 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import handleApiCall from "@/services/handleApiCall";
 import useAxiosAuth from "@/hooks/useAxiosAuth";
 import { showToastError, showToastSuccess } from "@/utils/util";
-import Input from "@/app/components/inputs/Input";
+
 
 interface AuthFormProps {
     onClose: () => void;
-    setIsCancelOrder: (success: boolean) => void;
     orderId: string;
 }
 
-const ListReason: React.FC<AuthFormProps> = ({ onClose, setIsCancelOrder, orderId }) => {
+const ListReason: React.FC<AuthFormProps> = ({ onClose, orderId }) => {
     const router = useRouter();
     const [zIndex, setZIndex] = useState(50);
     const axios = useAxiosAuth();
@@ -44,7 +42,6 @@ const ListReason: React.FC<AuthFormProps> = ({ onClose, setIsCancelOrder, orderI
             if(res && res.data) {
                 showToastSuccess("Hủy đơn hàng thành công");
                 router.push("/user/purchase?status=canceled");
-                setIsCancelOrder(true);
                 onClose();
             }
             

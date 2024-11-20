@@ -6,6 +6,8 @@ import { getSession, useSession } from "next-auth/react";
 
 type CartContextType = {
     handleAddProductToCart: (product: CartRequest) => boolean,
+    handleAddProductBuyNow: (product: CartRequest) => boolean,
+
     handleRemoveProductsFromCart: (product: CartRemoveRequest) => boolean,
     handleUpdateProductQuantity: (product: any) => boolean,
     handleCartProductsLength: () => any,
@@ -21,7 +23,6 @@ export const CartContext = createContext<CartContextType | null>(null)
 export const CartContextProvider = (props: any) => {
     const [cartLength, setCartLength] = useState<number>(0)
     const axiosAuth = useAxiosAuth();
-    // const [cart, setCart] = useState<CartType | null>(null)
     const [paymentIntent, setPaymentIntent] = useState<string | null>(null)
 
     const handleSetPaymentIntent = useCallback((val: string | null) => {
@@ -29,23 +30,10 @@ export const CartContextProvider = (props: any) => {
         localStorage.setItem('eShopPaymentIntent', JSON.stringify(val))
     }, [paymentIntent])
 
-    // useEffect(() => {
-    //     const getCart = async () => {
-    //     const session = await getSession();
-    //         const resData = await handleApiCall(axiosAuth.get(`/cart/${session?.user.email}`));
-    //         if (resData && resData.data) {
-    //             setCart(resData.data);
-    //         } else {
-    //             setCart(null);
-    //         }
 
-    //     };
-    //     getCart();
-    // }, [ axiosAuth ]);
-
-    const handleCartProductsLength= useCallback(async (): Promise<any> => {
+    const handleCartProductsLength = useCallback(async (): Promise<any> => {
         const session = await getSession();
-        const resData = await handleApiCall(axiosAuth.get(`/cart/${session?.user.email}/cart-products-length`));           
+        const resData = await handleApiCall(axiosAuth.get(`/cart/${session?.user.email}/cart-products-length`));
         if (!resData) {
             return 0;
         }
@@ -59,6 +47,15 @@ export const CartContextProvider = (props: any) => {
 
     const handleAddProductToCart = useCallback(async (cartRequest: CartRequest): Promise<boolean> => {
         const resData = await handleApiCall(axiosAuth.post("/cart/add-or-update", cartRequest));
+        if (!resData) {
+            return false;
+        }
+        return true;
+
+    }, [axiosAuth]);
+
+    const handleAddProductBuyNow  = useCallback(async (cartRequest: CartRequest): Promise<boolean> => {
+        const resData = await handleApiCall(axiosAuth.post("/cart/buy-now", cartRequest));
         if (!resData) {
             return false;
         }
@@ -86,6 +83,7 @@ export const CartContextProvider = (props: any) => {
         paymentIntent,
         cartLength,
         setCartLength,
+        handleAddProductBuyNow,
         handleAddProductToCart,
         handleRemoveProductsFromCart,
         handleUpdateProductQuantity,

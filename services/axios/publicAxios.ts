@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 const publicAxios = axios.create({
-    baseURL: 'http://localhost:8080/api/v1',
-    timeout: 10000,
+    baseURL: baseURL,
+    timeout: 100000,
     headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -13,11 +14,10 @@ const publicAxios = axios.create({
 
 publicAxios.interceptors.response.use(
     function (response) {
-        // Thành công: trả về dữ liệu response đã được xử lý
         return response.data;
     },
     function (error) {
-        return Promise.reject(new Error(error.response.data || error || 'Something went wrong'));
+        return Promise.reject(new Error(error?.response?.data || error || 'Something went wrong'));
     }
 );
 

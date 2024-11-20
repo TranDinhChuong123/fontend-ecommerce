@@ -37,11 +37,11 @@ const ProductImage: React.FC<ProductImageProps> = ({ selectedProduct, product, h
                                 ? 'border-[1.5px]' : ''
                             }`}
                         key={index}
-                        onClick={() => handleColorProduct(image.color, image.urlImage, productVariations)}
+                        onClick={() => handleColorProduct(image?.color, image?.urlImage, productVariations)}
                     >
                         <Image
                             fill
-                            src={image.urlImage}
+                            src={image?.urlImage || ''}
                             alt={`Image ${index}`}
                             className="object-contain"
                         />
@@ -59,7 +59,7 @@ const ProductImage: React.FC<ProductImageProps> = ({ selectedProduct, product, h
                 <Image
                     fill
                     src={selectedProduct?.urlImage || ''}
-                    alt={selectedProduct.selectedVariation.id}
+                    alt={selectedProduct?.selectedVariation?.id}
                     className="w-full h-full object-contain 
                     min-h-[100px]
                     max-h-[300px] 

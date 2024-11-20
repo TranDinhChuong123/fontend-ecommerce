@@ -6,17 +6,17 @@ import Footer from '@/app/components/footer/Footer';
 import Button from '@/app/components/Button';
 import { IoIosArrowRoundBack } from "react-icons/io";
 import NavBar from '@/app/components/nav/NavBar';
-import NavBarAuth from '@/app/components/nav/NavBarAuth';
 import Container from '@/app/components/Container';
+import getCurrentUser from '@/actions/getCurrentUser';
 
 const Login = async () => {
-  // const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser();
 
   return (
-    <div className='bg-custom-svg'>
+    <div className='bg-register-svg bg-cover bg-center w-screen h-screen'>
       <Container>
         <FormWrap style='justify-center md:justify-center lg:justify-end '>
-          <LoginForm currentUser={null} />
+          <LoginForm currentUser={currentUser} />
         </FormWrap>
       </Container>
     </div>

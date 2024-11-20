@@ -7,6 +7,7 @@ import { ProductCart } from "@/types/ProductTypes"
 import SetQuantityCart from "../components/cart/SetQuantityCart"
 import { useCallback, useState } from "react"
 import { Checkbox } from "@mui/material"
+import RenderIf from "@/utils/RenderIf"
 
 
 interface ItemContentProps {
@@ -17,7 +18,7 @@ interface ItemContentProps {
     handleSetIsUpdateQuantity: (isUpdateQuantity: boolean) => void;
 }
 
-const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selectedItems, handleItemSelect , handleSetIsUpdateQuantity }) => {
+const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selectedItems, handleItemSelect, handleSetIsUpdateQuantity }) => {
     const {
         handleAddProductToCart,
         handleUpdateProductQuantity
@@ -86,8 +87,18 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selected
                         {truncateText(item.name)}
                     </Link>
 
-                    <div>Size: {item?.size}</div>
-                    <div>Màu: {item.color}</div>
+                    <RenderIf isTrue={!!item.color}>
+                        <div>Màu: {item?.color}</div>
+                    </RenderIf>
+                
+
+                    <RenderIf isTrue={!!item.size}>
+                        <div>Size: {item?.size}</div>
+                    </RenderIf>
+
+                    <RenderIf isTrue={!!item.capacity}>
+                        <div> Dung lượng: {item?.capacity}</div>
+                    </RenderIf>
                 </div>
 
             </div>
@@ -104,7 +115,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, currentUserId, selected
                 />
             </div>
             <div className="justify-self-end font-semibold">
-                {formatPrice(calculateDiscountedPrice(item.price, item.discountPercent)*item.buyQuantity)}
+                {formatPrice(calculateDiscountedPrice(item.price, item.discountPercent) * item.buyQuantity)}
             </div>
         </div>
     )

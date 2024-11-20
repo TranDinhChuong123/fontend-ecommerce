@@ -20,7 +20,7 @@ const VariantSelector: React.FC<VariantSelectorProps> = ({ onSubmit }) => {
     const isCapacityChecked = watch("capacity");
     const isColorChecked = watch("color");
     const isSizeChecked = watch("size");
-    const isDiscountChecked = watch("discount");
+    // const isDiscountChecked = watch("discount");
 
     const onVariantChange = () => {
         handleSubmit(onSubmit)();
@@ -95,7 +95,7 @@ const VariantSelector: React.FC<VariantSelectorProps> = ({ onSubmit }) => {
                     />
                 )}
             </div>
-
+{/* 
             <div className="flex flex-col gap-2">
                 <div className="flex items-center ">
                     <input
@@ -115,7 +115,7 @@ const VariantSelector: React.FC<VariantSelectorProps> = ({ onSubmit }) => {
                         errors={errors}
                     />
                 )}
-            </div>
+            </div> */}
 
 
 

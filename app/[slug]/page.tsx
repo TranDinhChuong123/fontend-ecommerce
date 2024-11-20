@@ -10,10 +10,11 @@ interface ProductPageProps {
 
 const ProductPage: React.FC<ProductPageProps> = async ({ searchParams }) => {
     const currentUser = await getCurrentUser();
+    
     if (!searchParams.spid) {
         return <div>Product not found</div>;
     }
-    const product = await fetchProductByIdAPI(searchParams.spid);
+    const product = await fetchProductByIdAPI(searchParams.spid, currentUser?.accessToken);
 
     if (!product) {
         return <div className="flex justify-center items-center p-8">

@@ -46,7 +46,7 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
     useEffect(() => {
         const getUserOrderPeding = async () => {
             const res = await handleApiCall(axios.get(`/user/status-orders/PENDING`));
-            setOrderPendings(res.data || []);
+            setOrderPendings(res?.data || []);
 
         }
         getUserOrderPeding();
@@ -63,7 +63,7 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
     useEffect(() => {
         const getUserOrderCancelled = async () => {
             const res = await handleApiCall(axios.get(`/user/status-orders/CANCELED`));
-            setOrderCancelleds(res.data || []);
+            setOrderCancelleds(res?.data || []);
             setIsLoading(false);
         }
         getUserOrderCancelled();
@@ -73,7 +73,9 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
     useEffect(() => {
         const getUserOrderCompleted = async () => {
             const res = await handleApiCall(axios.get(`/user/status-orders/COMPLETED`));
-            setOrderCompleted(res.data || []);
+            console.log("res", res);
+
+            setOrderCompleted(res?.data || []);
             setIsLoading(false);
         }
         getUserOrderCompleted();
@@ -82,7 +84,7 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
     useEffect(() => {
         const getUserOrderCancelled = async () => {
             const res = await handleApiCall(axios.get(`/user/status-orders/CANCELED`));
-            setOrderCancelleds(res.data || []);
+            setOrderCancelleds(res?.data || []);
             setIsLoading(false);
         }
         getUserOrderCancelled();
@@ -93,8 +95,8 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
         const getUserOrderCancelled = async () => {
             const res = await handleApiCall(axios.get(`/user/status-orders/CANCELED`));
             console.log("res", res);
-            if (res && res.data) {
-                const data = res.data.filter((order: any) => order.orderStatus === "CANCELED" && order.payment.paymentStatus === "COMPLETED");
+            if (res && res?.data) {
+                const data = res?.data.filter((order: any) => order.orderStatus === "CANCELED" && order.payment.paymentStatus === "COMPLETED");
                 setOrderReturn(data || []);
                 console.log("orderCancelledsRefunded", data);
             }
@@ -123,10 +125,10 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
     }
 
     return (
-        <div className='flex flex-row w-full'>
-            <SideBar currentUser={currentUser || ''} />
-            <div className='bg-slate-50 border px-16 py-4 w-[85%]'>
-                <div className='flex flex-row gap-4 w-full justify-center text-slate-700 mb-5'>
+        <div className='w-full'>
+
+            <div className='bg-slate-50 border px-16 py-4 w-[100%]'>
+                <div className='flex flex-row gap-2 w-full justify-center text-slate-700 mb-5'>
                     <button
                         className={` py-2 px-4  
                         ${selectedOrder === "all" && "border-b-2 border-slate-700"}`}
@@ -187,7 +189,7 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
 
                     {orderPendings.map((order: any) => {
                         return (
-                            <div key={order.id} className='relative hover:cursor-pointer border px-8 shadow-md rounded-md mb-4'
+                            <div key={order.id} className='relative hover:cursor-pointer border px-8 shadow-md rounded-md mb-4 bg-white'
                                 onClick={() => router.push(`/user/purchase/order?orid=${order.id}`)}
                             >
                                 <div className='flex flex-row justify-end'>

@@ -11,6 +11,14 @@ export const truncateText = (str: string, stringLength: number = 20) => {
     }
     return str.substring(0, stringLength) + '...';
 }
+export const formatToMillions = (value: number): string => {
+    if (value < 1000000) {
+      return "0 tr"; // Nếu dưới 1 triệu, hiển thị là 0 tr
+    }
+    const millions = value / 1000000;
+    return `${millions.toFixed(1).replace(".", ",")} tr`;
+  };
+  
 
 export const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', {

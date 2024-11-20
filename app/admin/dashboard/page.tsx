@@ -1,11 +1,11 @@
-import DashboardClient from "@/app/components/admin/DashboardClient"
+import AdminDashboard from "@/app/components/admin/AdminDashboard"
 
 
 
 const Admin: React.FC = () => {
   return (
-    <div className="w-full min-h-screen">
-      <DashboardClient />
+    <div className="">
+      <AdminDashboard />
     </div>
   )
 }

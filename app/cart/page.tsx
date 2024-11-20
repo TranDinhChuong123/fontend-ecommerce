@@ -1,11 +1,8 @@
-
-
-import useCart from "@/hooks/useCart"
 import Container from "../components/Container"
 import CartClient from "./CartClient"
 import getCurrentUser from "@/actions/getCurrentUser"
 import NavBar from "../components/nav/NavBar"
-
+import Footer from "../components/footer/Footer"
 
 const Cart = async () => {
     const currentUser = await getCurrentUser()
@@ -17,6 +14,7 @@ const Cart = async () => {
                     <CartClient currentUser={currentUser} />
                 </Container>
             </div>
+            <Footer/>
         </div>
 
     )

@@ -12,17 +12,21 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast";
 import { FaGoogle, FaFacebook } from 'react-icons/fa'
 import GoogleIcon from "@/public/google-icon.png"
+import decodeToken from "@/utils/decodeToken"
+import getCurrentUser from "@/actions/getCurrentUser"
 
 
 interface LoginFormProps {
-    currentUser: null;
+    currentUser: any;
     // currentUser: SafeUser | null;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
+
+
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
-    
+
 
     const {
         reset,
@@ -31,7 +35,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
         formState: { errors }
     } = useForm<FieldValues>({
         defaultValues: {
-            'phoneNumber': "",
+            'email': "",
             'password': "",
         }
     })
@@ -50,7 +54,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                 redirect: false,
             });
             if (callback?.ok) {
-                router.push('/');
                 router.refresh();
             } else if (callback?.error) {
                 toast.error(callback.error);
@@ -68,16 +71,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
 
     useEffect(() => {
         if (currentUser) {
-            router.push('/')
-            router.refresh();
+            const user = decodeToken(currentUser?.accessToken|| "")
+            if(user.role === "ROLE_ADMIN") {
+                router.push('/admin/dashboard');
+                router.refresh();
+            } else {
+                router.push('/');
+                router.refresh();
+            }
         }
     }, [currentUser, router])
 
-    if (currentUser) {
-        return <p className="text-center">Logged in. Redirecting...</p>
-
-    }
-
+    // if (currentUser) {
+    //     return <p className="text-center">Logged in. Redirecting...</p>
+    // }
+    // console.log("currentUser", currentUser);
+    
     return (
         <>
             <Heading title="Đăng Nhập EconoMart" />
@@ -87,8 +96,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
             <hr className="bg-slate-200 w-full h-px" />
 
             <Input
-                id="phoneNumber"
-                label="Số Điện Thoại"
+                id="email"
+                label="Email"
                 disabled={isLoading}
                 errors={errors}
                 register={register}
@@ -110,7 +119,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                     onClick={handleSubmit(onSubmit)}
                     small
                 />
-                <Link className="underline text-sm" href="/register">Quên mật khẩu</Link>
+                <Link className="underline text-sm" href="/auth/forgot-password">Quên mật khẩu</Link>
             </div>
 
 

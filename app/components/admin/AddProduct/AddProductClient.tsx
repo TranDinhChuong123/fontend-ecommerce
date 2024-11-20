@@ -15,7 +15,7 @@ import VariantSelector, { DataVariant } from "./VariantSelector";
 import Image from "next/image";
 import { MdUpload } from "react-icons/md";
 import { InputLabel } from "@mui/material";
-import { createSlug } from "@/utils/util";
+import { createSlug, showToastError, showToastSuccess } from "@/utils/util";
 import handleApiCall from "@/services/handleApiCall";
 import useAxiosAuth from "@/hooks/useAxiosAuth";
 export type ImageType = {
@@ -49,17 +49,19 @@ const AddProductClient = () => {
             name: '',
             description: '',
             brand: '',
-            category: '',
+            category: 'dien-thoai-smartphone',
             price: '',
-            quantity: '',
+            purchasePrice: '',
             productVariation: '',
         },
 
     })
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const { name, description, brand, category, price, quantity, productVariation } = data;
-
+        const { name, description, brand, category, price, purchasePrice, productVariation } = data;
+        if(category === undefined || category === null ){
+            showToastError("Vui lòng chọn danh mục");
+        }
         if (!imageProduct) {
             return;
         }
@@ -79,7 +81,7 @@ const AddProductClient = () => {
             name,
             description,
             brand,
-            category,
+            category: createSlug(category),
             slug: createSlug(name),
             images: [{
                 color: productVariation?.color,
@@ -90,9 +92,9 @@ const AddProductClient = () => {
                     color: productVariation?.colorValue,
                     capacity: productVariation?.capacityValue,
                     size: productVariation?.sizeValue,
-                    discountPercent: productVariation?.discountValue,
+                    discountPercent: 0,
                     price,
-                    quantity
+                    purchasePrice
                 }
             ]
 
@@ -100,6 +102,7 @@ const AddProductClient = () => {
         const res = await handleApiCall(axios.post(`/product/create`, product));
 
         console.log("res", res);
+        showToastSuccess("Thêm sản phẩm thành công");
         // reset();      
 
     }
@@ -148,26 +151,23 @@ const AddProductClient = () => {
                     <div className="mb-2 font-semibold">Chọn loại sản phẩm</div>
                     <div className="flex flex-row gap-2 items-center flex-wrap">
                         {categories.map((item) => {
-                            if (item.lable === 'All') {
-                                return null
-                            }
-
                             return <div key={item.lable} className="col-span-1 p-1">
                                 <CategoryInput
                                     icon={item.icon}
                                     label={item.lable}
-                                    selected={category === item.lable}
+                                    selected={category === item.slug}
                                     onClick={(category) => setCustomValue('category', category)}
+                                    slug={item.slug}
                                 />
 
                             </div>
 
                         })}
-                        <button className="flex flex-row border-l-[1.5px] items-center justify-center px-2 h-[50px]">
+                        {/* <button className="flex flex-row border-l-[1.5px] items-center justify-center px-2 h-[50px]">
 
                             <IoIosAddCircleOutline size={30} className="text-slate-700" />
                             Thêm
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>
@@ -228,17 +228,10 @@ const AddProductClient = () => {
 
 
                     <div className="flex flex-row gap-2">
+
                         <Input
                             id="price"
-                            label="Giá"
-                            disabled={isLoading}
-                            register={register} errors={errors}
-                            required
-                            type="number"
-                        />
-                        <Input
-                            id="quantity"
-                            label="Số lượng"
+                            label="Giá dự kiến ban đầu"
                             disabled={isLoading}
                             register={register} errors={errors}
                             required

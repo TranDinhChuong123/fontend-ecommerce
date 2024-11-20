@@ -29,12 +29,15 @@ const useAxiosAuth = () => {
                         }
                         return authAxiosInstance(originalRequest);
                     }
+                    if (error.response.status === 400) {
+                        console.error("Bad request: ", error);
+                    }
                     if (error.response.status === 403) {
                         console.error("Access forbidden: ", error);
                     }
                 }
 
-                return Promise.reject(error);
+                return Promise.reject(new Error(error.response.data || error || 'Something went wrong'));
             }
         );
         // Dọn dẹp interceptor khi component unmount

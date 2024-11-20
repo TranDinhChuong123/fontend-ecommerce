@@ -25,7 +25,7 @@ const PasswordForm: FC = () => {
             return;
         }
 
-        // Gửi thông tin mật khẩu lên server hoặc Firebase tại đây
+        
         toast.success("Thiết lập mật khẩu thành công!");
     };
 

@@ -64,7 +64,9 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
                 setLoading(false)
                 return;
             }
-            const response = await handleApiCall(axiosAuth.get(`/cart/${currentUser.email}`));
+            const response = await handleApiCall(axiosAuth.get(`/cart/userId`));
+            console.log("response", response);
+
             if (response && response.data) {
                 setCart(response.data);
                 const listProductCartIds = response.data.cartProducts
@@ -86,7 +88,7 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
     useEffect(() => {
         const getAddressesByUser = async () => {
             if (!currentUser) return;
-            const response = await handleApiCall(axiosAuth.get(`/user/${currentUser.email}/addresses`));
+            const response = await handleApiCall(axiosAuth.get(`/user/addresses`));
             setAddresses(response.data || []);
         };
         getAddressesByUser();
@@ -120,10 +122,12 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
         );
     }
 
+
+
     if (!cart || cart.cartProducts.length === 0) {
         return (
             <div className='flex flex-col items-center m-20'>
-                <FaBagShopping  className='text-teal-600' size={100} />
+                <FaBagShopping className='text-teal-600' size={100} />
                 <div className='text-xl m-5'>Giỏ hàng của bạn còn trống</div>
                 <div>
                     <Link href={"/"} className='flex text-slate-500 items-center ga-2 mt-2'>
@@ -200,8 +204,7 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
 
 
 
-    console.log(addresses);
-    
+
     return <div>
         <Heading title='Giỏ Hàng' center />
         <div className='grid grid-cols-5 text-sm font-semibold

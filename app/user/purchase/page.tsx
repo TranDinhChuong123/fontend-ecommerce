@@ -12,7 +12,7 @@ const PurchasePage: React.FC<Props> = async ({ searchParams }) => {
   const currentUser = await getCurrentUser();
   return (
     <div>
-      <NavBar label='Đơn mua' />      
+    
       <UserOrder currentUser={currentUser?.username} status={searchParams?.status} />
     </div>
   )

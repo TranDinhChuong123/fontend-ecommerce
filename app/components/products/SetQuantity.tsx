@@ -75,9 +75,9 @@ const SetQuantity: React.FC<SetQuantityProps> = ({
 
                 />
                 <button
-                    disabled={selectedProduct.buyQuantity === selectedProduct.selectedVariation.quantity}
+                    disabled={selectedProduct?.buyQuantity === selectedProduct?.selectedVariation?.quantity}
                     className={
-                        selectedProduct.buyQuantity === selectedProduct.selectedVariation.quantity ? btnStyles + ' opacity-50' : btnStyles
+                        selectedProduct?.buyQuantity === selectedProduct?.selectedVariation?.quantity ? btnStyles + ' opacity-50' : btnStyles
                     }
                     onClick={handleIncrease}>+</button>
             </div>

@@ -4,36 +4,37 @@ import NavBar from '../components/nav/NavBar'
 import Categories from '../components/nav/Categories'
 import Container from '../components/Container'
 import HomeBanner from '../components/HomeBanner'
-import { fetchProductsWithFiltersAPI } from '@/services/productService'
+import { fetchProductsWithCategoryAPI, fetchProductsWithFiltersAPI } from '@/services/productService'
 import ProductCard from '../components/products/ProductCard'
+import HomePageLayout from '../home/HomePageLayout'
 
 
+interface CategoryPageProps {
+    searchParams: { q?: string, page?: number, keyword?: string };
+}
 
-const page = async () => {
-    const products = await fetchProductsWithFiltersAPI();
+const CategoryPage = async ({ searchParams }: CategoryPageProps) => {
+
+    const categoryQuery = searchParams.q || 'thoi-trang-nam'
+    const page = searchParams.page || 1
+    const keyword = searchParams.keyword || ''
+
+    const products = await fetchProductsWithCategoryAPI(categoryQuery, page, keyword);
+
     return (
-        <div>
-            <NavBar />
-            <Categories />
-            <div className="p-8">
-                <Container>
-                    <HomeBanner />
+        <HomePageLayout
+            products={products}
+            namePage='category'
+            currentPage={page || 1}
+            categoryQuery={categoryQuery}
+            label={
+                categoryQuery === 'thoi-trang-nam' ? 'Áo thời trang' :
+                    categoryQuery === 'dien-thoai-smartphone' ? 'ĐIỆN THOẠI' :
+                        categoryQuery === 'dien-gia-dung' ? 'ĐIỆN GIA DỤNG' :
+                            categoryQuery === 'giay-the-thao' ? 'GIÀY THỂ THAO' : ''
 
-                    <div className="grid grid-cols-2 
-                        sm:grid-cols-3 
-                        lg:grid-cols-4
-                        xl:grid-cols-5
-                        2xl:grid-cols-6
-                        gap-8
-                        ">
-                        {products.map((product: any) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                </Container>
-            </div>
-        </div>
+            } />
     )
 }
 
-export default page
+export default CategoryPage

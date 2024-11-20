@@ -72,41 +72,47 @@ const ReviewForm: React.FC<AuthFormProps> = ({ item, onClose, updateDefaultAddre
             formData.append('files', file); // Tên trường là 'files' theo backend
         });
 
+        let imageUrls = [];
 
-        const resImages = await handleApiCall(axios.post(`/upload/images`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        }));
-
-        
-
-        if (resImages.status === 200 && resImages.data) {
-            {
-                const reviewRequest = {
-                    orderId: item.id,
-                    productId: item.productId,
-                    selectedVariationId: item.selectedVariationId,
-                    rating: data.rating,
-                    comment: data.comment,
-                    imageUrls: resImages.data
-                };
-
-                const response = await handleApiCall(axios.post(`/review/create`, reviewRequest));
-
-                console.log("response", response);
-                if (response.status === 200 && response.data) {
-                    showToastSuccess('Đánh giá thành công!');
-                    setIsFormSuccess(true);
-                    setIsLoading(false);
-                    onClose(); // Đóng form sau khi thành công
-                } else {
-                    showToastError('Đánh giá không thành công. Vui lòng thử lại!'); // Thông báo lỗi nếu không thành công
-                }
+        if (selectedImages.length > 0) {
+            const res = await handleApiCall(axios.post(`/upload/images`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }));
+            if (res.status === 200 && res.data) {
+                imageUrls = res.data
+            } else {
+                showToastError('Upload hình ảnh không thành công. Vui lòng thử lại!');
+                return;
             }
+        }
 
 
+        const reviewRequest = {
+            orderId: item.id,
+            productId: item.productId,
+            selectedVariationId: item.selectedVariationId,
+            rating: data.rating,
+            comment: data.comment,
+            imageUrls: imageUrls
         };
+
+        const response = await handleApiCall(axios.post(`/review/create`, reviewRequest));
+
+        console.log("response", response);
+        if (response.status === 200 && response.data) {
+            showToastSuccess('Đánh giá thành công!');
+            setIsFormSuccess(true);
+            setIsLoading(false);
+            onClose();
+        } else {
+            showToastError('Đánh giá không thành công. Vui lòng thử lại!'); // Thông báo lỗi nếu không thành công
+        }
+
+
+
+
     }
 
 

@@ -42,7 +42,7 @@ const AddressForm: React.FC<AuthFormProps> = ({ onClose, email, setIsFormSuccess
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
         try {
             setIsLoading(true);
-            const response = await handleApiCall(axios.post(`/user/${email}/addresses`, {
+            const response = await handleApiCall(axios.post(`/user/add-address`, {
                 ...(address && { id: address.id }),
                 ...data
             }));
