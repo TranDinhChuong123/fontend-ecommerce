@@ -19,6 +19,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import { GrUpdate } from "react-icons/gr";
 import { MdOutlineUpdate } from "react-icons/md";
 import { FaBagShopping } from "react-icons/fa6";
+import LoadingComponent from '../components/common/LoadingComponent'
 interface CartClientProps {
     currentUser: any,
 }
@@ -113,12 +114,7 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
 
     if (loading) {
         return (
-            <div className='flex flex-col items-center'>
-                <div className='text-xl mt-10 text-slate-400 flex flex-row items-center gap-2'>
-                    <MdOutlineUpdate size={20} />
-                    loading...
-                </div>
-            </div>
+            <LoadingComponent />
         );
     }
 
@@ -126,22 +122,22 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
 
     if (!cart || cart.cartProducts.length === 0) {
         return (
-            <div className='flex flex-col items-center m-20'>
-                <FaBagShopping className='text-teal-600' size={100} />
-                <div className='text-xl m-5'>Giỏ hàng của bạn còn trống</div>
-                <div>
-                    <Link href={"/"} className='flex text-slate-500 items-center ga-2 mt-2'>
-                        <div className='w-[400px]'>
-                            <Button
-                                label="Mua Sắm"
-                                rounded
-                                icon={FaCartShopping}
-                                styleIcon='text-white'
-                            />
-                        </div>
-                    </Link>
-                </div>
+            <div className="flex flex-col items-center my-20 px-4">
+                {/* Icon túi mua sắm */}
+                <FaBagShopping className="text-teal-500" size={120} />
+
+                {/* Thông báo giỏ hàng trống */}
+                <p className="text-gray-700 text-2xl font-semibold mt-6">Giỏ hàng của bạn còn trống</p>
+
+                {/* Nút mua sắm */}
+                <Link href={"/"} className="mt-8">
+                    <button className="flex items-center gap-3 bg-teal-500 text-white text-lg font-medium py-3 px-8 rounded-full shadow-md hover:bg-teal-600 transition duration-300">
+                        <FaCartShopping className="text-white" size={20} />
+                        <span>Mua Sắm</span>
+                    </button>
+                </Link>
             </div>
+
         )
     }
 
@@ -243,6 +239,7 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
                 <div className='w-[90px] mx-4'>
                     <Button
                         label='Xóa'
+                        custom='bg-red-600 text-white border-white border px-4 py-2'
                         onClick={removeProductsFromCart}
                         small
                         outline
@@ -251,13 +248,13 @@ const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
                 </div>
             </div>
 
-            <div className='text-sm flex flex-row gap-0 w-[500px] items-center '>
-                <div className='w-[700px] flex flex-row gap-2 items-center'>
+            <div className='text-sm flex flex-row gap-0 w-[600px] items-center '>
+                <div className='w-[700px] flex flex-row gap-5 items-center'>
                     <div className='flex flex-col items-center'>
                         <p>({selectedItems.length} sản phẩm)</p>
                         <p className='text-md font-medium text-base'>Tổng Thanh Toán :</p>
                     </div>
-                    <p className='text-rose-500 text-xl font-semibold'>{totalAmount}</p>
+                    <p className='text-red-600 text-xl font-semibold'>{totalAmount}</p>
                 </div>
 
                 <Button

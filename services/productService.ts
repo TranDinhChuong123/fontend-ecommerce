@@ -2,9 +2,9 @@ import publicAxios from '@/services/axios/publicAxios'; // Đổi tên file nế
 import handleApiCall from './handleApiCall';
 import slugify from 'slugify';
 
-export const fetchProductsWithFiltersAPI = async (page: number = 1) => {
+export const fetchProductsWithFiltersAPI = async (page: number = 1, limit: number = 30) => {
     
-    return handleApiCall(publicAxios.post('/product', { page }));
+    return handleApiCall(publicAxios.post('/product', { page , limit }));
 }
 
 // export const fetchProductByIdAPI = async (productId: string): Promise<any> => {
@@ -21,7 +21,7 @@ export const fetchProductByIdAPI = async (productId: string, token?: string): Pr
 
 
 export const fetchProductsWithDiscountAPI = async (discount: number, page: number = 1) => {
-    return handleApiCall(publicAxios.post('/product', { page, productFilter: { discountPercent: discount } }));
+    return handleApiCall(publicAxios.post('/product', {page, productFilter: { discountPercent: discount } }));
 }
 
 export const fetchProductsWithTotalSoldAPI = async (page: number = 1) => {

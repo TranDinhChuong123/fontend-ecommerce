@@ -1,7 +1,7 @@
 'use client'
 
+import { ImageType } from "@/types/ProductTypes"
 import { useCallback } from "react"
-import { ImageType } from "../admin/AddProductForm"
 import { useDropzone } from 'react-dropzone'
 
 interface SelectImageProps {

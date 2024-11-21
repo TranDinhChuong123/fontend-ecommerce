@@ -16,46 +16,6 @@ interface AuthFormProps {
     onClose: () => void
 }
 
-
-// const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
-//     const router = useRouter();
-
-//     return (
-//         <div className="fixed inset-0 z-50 flex items-center justify-center">
-//             <div className="relative flex flex-col items-center gap-4 bg-white w-[350px] p-6 rounded-lg shadow-lg">
-//                 <button
-//                     className="absolute top-2 right-2"
-//                     onClick={onClose}
-//                 >
-//                     <MdOutlineCancel className="text-black w-6 h-6" />
-//                 </button>
-
-//                 <Heading title="Đăng Nhập EconoMart" />
-
-//                 <Button
-//                     label="Google"
-//                     imageIcon={{ src: GoogleIcon, alt: "Google Icon" }}
-//                     onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000' })}
-//                     small
-//                     outline
-//                 />
-//                 <Button
-//                     label="Facebook"
-//                     icon={FaFacebook}
-//                     onClick={() => signIn('facebook', { callbackUrl: 'http://localhost:3000' })}
-//                     small
-//                     outline
-//                     styleIcon="text-blue-600"
-//                 />
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default AuthForm;
-
-
-
 const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
     const router = useRouter();
     const [zIndex, setZIndex] = useState(50); // Trạng thái zIndex

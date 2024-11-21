@@ -1,3 +1,4 @@
+'use client'
 
 import React from 'react'
 import FormWrap from '../../components/FormWrap'
@@ -11,7 +12,7 @@ const CheckoutPaymentPage = () => {
             <NavBar label="Thẻ thanh toán" />
             <div className='w-full bg-slate-50 flex items-center justify-center py-10'>
                 <div className='bg-white w-[45%] p-4 '>
-                    <PaymentClient />
+                    {/* <PaymentClient /> */}
                 </div>
             </div>
         </div>

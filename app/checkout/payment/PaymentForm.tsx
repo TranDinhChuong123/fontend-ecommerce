@@ -14,21 +14,30 @@ import useAxiosAuth from "@/hooks/useAxiosAuth"
 interface CheckoutFormProps {
     clientSecret: string,
     handleSetPaymentSuccess: (value: boolean) => void
+    feeShip: number,
+    totalPrice: number,
+    listProductCarts: any
+    note: string | null
+
+
 }
 
 const PaymentForm: React.FC<CheckoutFormProps> = ({
     clientSecret,
-    handleSetPaymentSuccess
+    handleSetPaymentSuccess,
+    note,
+    feeShip,
+    totalPrice,
+    listProductCarts
 }) => {
-    const { paymentIntent,handleSetPaymentIntent } = useCart()
+    const { paymentIntent, handleSetPaymentIntent } = useCart()
     const axios = useAxiosAuth()
     const [isLoading, setIsLoading] = useState(false)
     const elements = useElements()
-    const totalPrice = JSON.parse(localStorage.getItem('totalPrice') || '0')
-    const listProductCarts = JSON.parse(localStorage.getItem('listProductCarts') || '[]')
+
     const stripe = useStripe()
 
-    const{} = useCart()
+    const { } = useCart()
 
     useEffect(() => {
         if (!stripe || !clientSecret) {
@@ -59,8 +68,9 @@ const PaymentForm: React.FC<CheckoutFormProps> = ({
 
                 // Gọi API tạo đơn hàng
                 const resData = await handleApiCall(axios.post('/order/create', {
-                    feeShip: 30000,
-                    totalPrice: parseInt(totalPrice) + 1, // Dòng này có thể cần điều chỉnh
+                    note,
+                    feeShip,
+                    totalPrice: totalPrice + feeShip,
                     orderProducts: listProductCarts,
                     payment: {
                         paymentMethod: 'CREDIT_CARD',
@@ -72,11 +82,10 @@ const PaymentForm: React.FC<CheckoutFormProps> = ({
 
                 if (resData) {
                     console.log("create order success", resData);
-                    toast.success('Thanh toán thành công');
                     handleSetPaymentSuccess(true);
                     handleSetPaymentIntent(null);
                     console.log("paymentIntent", paymentIntent);
-                    
+
                 }
             }
         } catch (error) {
@@ -104,7 +113,7 @@ const PaymentForm: React.FC<CheckoutFormProps> = ({
             <PaymentElement id="payment-element" options={{ layout: 'tabs' }} />
 
             <div className="py-4 text-center text-slate-700 text-xl font-bold">
-                Tổng: {formatPrice(totalPrice)}
+                Tổng: {formatPrice(totalPrice+ feeShip)}
             </div>
 
             <Button

@@ -1,23 +1,17 @@
 'use client'
 
-import { useState } from "react"
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
-import Heading from "../../Heading";
+import useAxiosAuth from "@/hooks/useAxiosAuth";
+import handleApiCall from "@/services/handleApiCall";
+import { categories } from "@/utils/Categories";
+import { createSlug, showToastError, showToastSuccess } from "@/utils/util";
+import Image from "next/image";
+import { useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { MdUpload } from "react-icons/md";
+import CategoryInput from "../../inputs/CategoryInput";
 import Input from "../../inputs/Input";
 import TextArea from "../../inputs/TextArea";
-import CustomCheckBox from "../../inputs/CustomCheckBox";
-import { categories } from "@/utils/Categories";
-import CategoryInput from "../../inputs/CategoryInput";
-import { colors } from "@/utils/Colors";
-import SelectColor from "../../inputs/SelectColor";
-import { IoIosAddCircleOutline } from "react-icons/io";
 import VariantSelector, { DataVariant } from "./VariantSelector";
-import Image from "next/image";
-import { MdUpload } from "react-icons/md";
-import { InputLabel } from "@mui/material";
-import { createSlug, showToastError, showToastSuccess } from "@/utils/util";
-import handleApiCall from "@/services/handleApiCall";
-import useAxiosAuth from "@/hooks/useAxiosAuth";
 export type ImageType = {
     color: string;
     colorCode: string;

@@ -71,8 +71,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
 
     useEffect(() => {
         if (currentUser) {
-            const user = decodeToken(currentUser?.accessToken|| "")
-            if(user.role === "ROLE_ADMIN") {
+            const user = decodeToken(currentUser?.accessToken || "")
+            if (user.role === "ROLE_ADMIN") {
                 router.push('/admin/dashboard');
                 router.refresh();
             } else {
@@ -86,7 +86,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     //     return <p className="text-center">Logged in. Redirecting...</p>
     // }
     // console.log("currentUser", currentUser);
-    
+
     return (
         <>
             <Heading title="Đăng Nhập EconoMart" />
@@ -117,9 +117,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                 <Button
                     label={isLoading ? "Loading..." : "Đăng Nhập"}
                     onClick={handleSubmit(onSubmit)}
-                    small
+                    
+
                 />
-                <Link className="underline text-sm" href="/auth/forgot-password">Quên mật khẩu</Link>
+             
+                <Link href="/auth/forgot-password" className="text-md text-gray-500 hover:underline">
+                    Quên mật khẩu?
+                </Link>
             </div>
 
 

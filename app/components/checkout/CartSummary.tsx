@@ -4,14 +4,11 @@ import { useState } from "react";
 interface CartSummaryProps {
     totalAmount: number;
     shippingFee: number;
+    setNote : (value: string) => void;
 }
 
-const CartSummary: React.FC<CartSummaryProps> = ({ totalAmount, shippingFee }) => {
-    const [message, setMessage] = useState<string>("");
-
-    const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setMessage(e.target.value);
-    };
+const CartSummary: React.FC<CartSummaryProps> = ({ totalAmount, shippingFee , setNote}) => {
+  
 
     return (
         <div className="flex flex-col bg-white shadow-lg rounded-lg px-6 py-4 border border-gray-200">
@@ -41,8 +38,8 @@ const CartSummary: React.FC<CartSummaryProps> = ({ totalAmount, shippingFee }) =
                 <input
                     id="orderMessage"
                     type="text"
-                    value={message}
-                    onChange={handleMessageChange}
+              
+                    onChange={(e) => setNote(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Nhập lời nhắn của bạn"
                 />

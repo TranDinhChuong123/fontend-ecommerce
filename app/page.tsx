@@ -1,16 +1,15 @@
-import { fetchProductsWithFiltersAPI } from "@/services/productService";
-import Container from "./components/Container";
-import HomeBanner from "./components/HomeBanner";
-import ProductCard from "./components/products/ProductCard";
-import NavBar from "./components/nav/NavBar";
-import Categories from "./components/nav/Categories";
-import { Pagination } from "@mui/material";
-import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { fetchProductsWithFiltersAPI, fetchProductsWithTotalSoldAPI } from "@/services/productService";
 import RenderIf from "@/utils/RenderIf";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
+import Container from "./components/Container";
 import Footer from "./components/footer/Footer";
-import decodeToken from "@/utils/decodeToken";
+import HomeBanner from "./components/HomeBanner";
+import Categories from "./components/nav/Categories";
+import NavBar from "./components/nav/NavBar";
+import ProductCard from "./components/products/ProductCard";
+import ProducCarousel from "./home/ProductCarousel";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -19,22 +18,23 @@ export default async function Home() {
   const session = await getServerSession(authOptions)
   const token = session?.user?.accessToken;
   const products = await fetchProductsWithFiltersAPI();
+  const productsDIscount = await fetchProductsWithTotalSoldAPI(3);
   console.log("products", products);
-  
-  
+
+
   const fetchRecommendedProducts = async () => {
-    try{
+    try {
       const response = await fetch(`${apiUrl}/recommendation/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const data = await response.json();
       console.log("data", data);
-      
+
       return data?.data || [];
-    }catch (error) {
+    } catch (error) {
       console.error('Error fetching recommended products:', error);
       return [];
     }
@@ -44,8 +44,8 @@ export default async function Home() {
     ? await fetchRecommendedProducts()
     : [];
 
-    console.log("recommendedProductsData", recommendedProductsData);
-    
+  console.log("recommendedProductsData", recommendedProductsData);
+
 
 
   return (
@@ -57,7 +57,21 @@ export default async function Home() {
         <Container>
 
           <HomeBanner />
+
+          <RenderIf isTrue={productsDIscount.length > 0}>
+
+
+            <div className="flex flex-col items-center py-5 gap-4">
+              <p className='font-bold text-xl text-slate-600'> SẢN PHẨM NỔI BẬT</p>
+              <hr className="w-[50%]" />
+              <p className="text-gray-500">Khám phá những sản phẩm mà bạn có thể quan tâm</p>
+
+            </div>
+            <ProducCarousel products={productsDIscount} />
+          </RenderIf>
           <RenderIf isTrue={recommendedProductsData.length > 0}>
+
+
 
             <div className="flex flex-col items-center py-5 gap-4">
               <p className='font-bold text-xl'> GỢI Ý SẢN PHẨM CHO BẠN</p>
@@ -85,8 +99,9 @@ export default async function Home() {
             <p className='font-bold text-xl'>SẢN PHẨM HÔM NAY</p>
             <hr className="w-[50%]" />
             <p>Khám phá những sản phẩm mà bạn có thể quan tâm</p>
-
           </div>
+
+
 
 
           <div className="grid grid-cols-2 
@@ -102,7 +117,7 @@ export default async function Home() {
           </div>
 
           <div className="flex justify-center mt-[20px]">
-            <Link className="text-white bg-slate-400 px-[150px] py-2" href='/daily_discover?page=2'>
+            <Link className="text-white bg-blue-400 px-[150px] py-2 rounded-sm text-base" href='/daily_discover?page=2'>
               Xem thêm
             </Link>
           </div>

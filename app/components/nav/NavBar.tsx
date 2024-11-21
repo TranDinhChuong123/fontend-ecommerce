@@ -62,7 +62,6 @@ const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, que
             `}
         >
           <div className='flex items-start justify-between gap-3 md:gap-0'>
-
             <div className='flex flex-row gap-5 items-center'>
               <Link className={`${redressed.className} font-bold text-2xl flex flex-row gap-2 items-center`} href="/">
                 <FcShop className='text-sky-500' size={44} />
@@ -72,8 +71,6 @@ const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, que
             </div>
 
             <div>
-
-
               <div className=' flex flex-row items-center gap-1 border rounded-full pl-2 mx-32'>
                 <CiSearch size={24} />
                 <input
@@ -100,7 +97,7 @@ const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, que
                 </RenderIf>
 
               </div>
-              <div className='flex flex-row items-center gap-8 mt-5 text-slate-500 '>
+              {/* <div className='flex flex-row items-center gap-8 mt-5 text-slate-500 '>
                 <Link className={`${query === 'san-pham-moi' ? ' text-slate-700 underline' : null}`} href='/collections?q=san-pham-moi'>
                   SẢN PHẨM MỚI
                 </Link>
@@ -115,7 +112,38 @@ const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, que
                   SẢN PHẨM GIÁ TỐT
                 </Link>
 
+              </div> */}
+              <div className="flex flex-wrap items-center gap-6 mt-5 text-slate-500">
+                <Link
+                  className={`${query === 'san-pham-moi' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                    } transition-all duration-300 ease-in-out`}
+                  href="/collections?q=san-pham-moi"
+                >
+                  SẢN PHẨM MỚI
+                </Link>
+                <Link
+                  className={`${query === 'san-pham-sale' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                    } transition-all duration-300 ease-in-out`}
+                  href="/collections?q=san-pham-sale"
+                >
+                  SẢN PHẨM SALE
+                </Link>
+                <Link
+                  className={`${query === 'san-pham-ban-chay' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                    } transition-all duration-300 ease-in-out`}
+                  href="/collections?q=san-pham-ban-chay"
+                >
+                  SẢN PHẨM BÁN CHẠY
+                </Link>
+                <Link
+                  className={`${query === 'san-pham-gia-tot' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                    } transition-all duration-300 ease-in-out`}
+                  href="/collections?q=san-pham-gia-tot"
+                >
+                  SẢN PHẨM GIÁ TỐT
+                </Link>
               </div>
+
             </div>
             <div className='flex items-center gap-3 md:gap-12'>
               <RenderIf isTrue={!notIsCart}>
