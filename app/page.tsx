@@ -10,6 +10,7 @@ import Categories from "./components/nav/Categories";
 import NavBar from "./components/nav/NavBar";
 import ProductCard from "./components/products/ProductCard";
 import ProducCarousel from "./home/ProductCarousel";
+import PromoBanner from "./home/PromoBanner";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -19,7 +20,6 @@ export default async function Home() {
   const token = session?.user?.accessToken;
   const products = await fetchProductsWithFiltersAPI();
   const productsDIscount = await fetchProductsWithTotalSoldAPI(3);
-  console.log("products", products);
 
 
   const fetchRecommendedProducts = async () => {
@@ -31,7 +31,6 @@ export default async function Home() {
       });
 
       const data = await response.json();
-      console.log("data", data);
 
       return data?.data || [];
     } catch (error) {
@@ -44,7 +43,6 @@ export default async function Home() {
     ? await fetchRecommendedProducts()
     : [];
 
-  console.log("recommendedProductsData", recommendedProductsData);
 
 
 
@@ -69,6 +67,7 @@ export default async function Home() {
             </div>
             <ProducCarousel products={productsDIscount} />
           </RenderIf>
+          <PromoBanner />
           <RenderIf isTrue={recommendedProductsData.length > 0}>
 
 
@@ -130,88 +129,3 @@ export default async function Home() {
     </div>
   );
 }
-
-
-
-// import { fetchProductsWithFiltersAPI } from "@/services/productService";
-// import HomeClient from "./home/HomeClient";
-
-// export default async function Home() {
-
-//   const products = await fetchProductsWithFiltersAPI();
-
-//   return (
-//     <>
-//       <HomeClient  />
-//     </>
-//   );
-// }
-
-
-
-// 'use client'
-
-// import { fetchProductsWithFiltersAPI } from "@/services/productService";
-// import Container from "./components/Container";
-// import HomeBanner from "./components/HomeBanner";
-// import ProductCard from "./components/products/ProductCard";
-// import NavBar from "./components/nav/NavBar";
-// import Categories from "./components/nav/Categories";
-// import { useEffect, useState } from "react";
-// import handleApiCall from "@/services/handleApiCall";
-// import publicAxios from "@/services/axios/publicAxios";
-
-// export default function Home() {
-
-
-//   const [products, setProducts] = useState([]);
-//   const [currentPage, setCurrentPage] = useState(1);
-
-
-//   useEffect(() => {
-//     const fetchProducts = async () => {
-//       try {
-//         const data = await fetchProductsWithFiltersAPI(currentPage);
-//         console.log("data", data); // Kiểm tra log dữ liệu từ API
-//         setProducts(data);
-//       } catch (error) {
-//         console.error("Lỗi khi gọi API:", error);
-//       }
-//     };
-
-//     fetchProducts();
-//   }, [currentPage]);
-
-
-//   console.log("products", products);
-//   console.log("cmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
-
-
-
-//   return (
-//     <div>
-//       <NavBar />
-//       <Categories />
-//       <div className="p-8">
-
-//         <Container>
-
-//           <HomeBanner />
-
-//           <div className="grid grid-cols-2 
-//             sm:grid-cols-3 
-//             lg:grid-cols-4
-//             xl:grid-cols-5
-//             2xl:grid-cols-6
-//             gap-8
-//           ">
-//             {products.map((product: any) => (
-//               <ProductCard key={product?.id} product={product} />
-//             ))}
-//           </div>
-//         </Container>
-//       </div>
-//     </div>
-//   );
-// }
-

@@ -14,6 +14,7 @@ import { FaGoogle, FaFacebook } from 'react-icons/fa'
 import GoogleIcon from "@/public/google-icon.png"
 import decodeToken from "@/utils/decodeToken"
 import getCurrentUser from "@/actions/getCurrentUser"
+import { showToastError } from "@/utils/util"
 
 
 interface LoginFormProps {
@@ -56,13 +57,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
             if (callback?.ok) {
                 router.refresh();
             } else if (callback?.error) {
-                toast.error(callback.error);
+                showToastError("Email hoặc password không đúng");
                 console.log(callback.error);
-
-
             }
         } catch (error) {
-            toast.error('Đăng nhập không thành công !');
+            toast.error('Email hoặc password không đúng');
+            console.log(error);
         } finally {
             setIsLoading(false)
         }
@@ -117,10 +117,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                 <Button
                     label={isLoading ? "Loading..." : "Đăng Nhập"}
                     onClick={handleSubmit(onSubmit)}
-                    
+
 
                 />
-             
+
                 <Link href="/auth/forgot-password" className="text-md text-gray-500 hover:underline">
                     Quên mật khẩu?
                 </Link>
