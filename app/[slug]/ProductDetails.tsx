@@ -1,6 +1,6 @@
 'use client'
 
-import Button from "@/app/components/Button"
+import Button from "@/app/components/common/Button"
 import ProductImage from "@/app/components/products/ProductImage"
 import SetQuantity from "@/app/components/products/SetQuantity"
 import useCart from "@/hooks/useCart"
@@ -23,9 +23,20 @@ import { fetchReviewsAPI } from "@/services/reviewService"
 import { FaBagShopping } from "react-icons/fa6";
 import handleApiCall from "@/services/handleApiCall"
 
+import publicAxios from '@/services/axios/publicAxios'; // Đổi tên file nếu cần
+import useCurrentUser from "@/actions/useCurrentUser "
+import ProducCarousel from "../home/ProductCarousel"
+import { fetchProductsWithCategoryAPI } from "@/services/productService"
+import ProductCard from "../components/products/ProductCard"
+import PromoBanner from "../home/PromoBanner"
+
 interface ProductDetailProps {
   product: any,
   currentUser: any
+}
+export interface StockVariationType {
+  variationId: string,
+  quantity: number
 }
 
 const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) => {
@@ -33,35 +44,41 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
   const axios = useAxiosAuth();
   const { handleAddProductBuyNow, handleAddProductToCart, setCartLength } = useCart()
   const [isOpen, setIsOpen] = useState(false)
+
   const [reviews, setReviews] = useState([])
+  const [stockVariation, setStockVariation] = useState<StockVariationType[]>()
 
 
-  // const fetchProductStock = useCallback(async () => {
-  //   const response = await handleApiCall(axios.get(`/inventory/${product.id}`));
-  //   console.log('response', response);
-  // }, [axios, product.id]); 
+  const fetchProductStock = useCallback(async () => {
+    const response = await handleApiCall(publicAxios.get(`/product/${product.id}/variations`));
 
-  // useEffect(() => {
-  //   fetchProductStock();
-  // }, [fetchProductStock]);
-
-
+    setStockVariation(response || []);
+  }, [publicAxios, product.id]);
 
   useEffect(() => {
-    const getReviews = async () => {
-      const data = await fetchReviewsAPI(product.id)
-      setReviews(data || [])
-    }
+    fetchProductStock();
+  }, [fetchProductStock]);
+
+
+  const getReviews = async () => {
+    const data = await fetchReviewsAPI(product.id)
+    setReviews(data || [])
+  }
+
+  useEffect(() => {
+
     getReviews();
   }, [])
+
+  const averageRating = reviews.reduce((total, review: any) => total + review?.rating, 0) / reviews.length;
 
 
   const { handleCartProductsLength } = useCart()
   const [selectedProduct, setSelectedProduct] = useState<DynamicProductType>({
-    urlImage: product.images[0].urlImage,
-    color: product.images[0].color,
+    urlImage: product?.images?.[0].urlImage,
+    color: product?.images?.[0]?.color,
     buyQuantity: 1,
-    price_new: calculateDiscountedPrice(product.productVariations[0].price, product.productVariations[0].discountPercent),
+    price_new: calculateDiscountedPrice(product?.productVariations?.[0].price, product.productVariations[0].discountPercent),
     selectedVariation: product.productVariations.find((variation: ProductVariationType) => variation.color === product.images[0].color) || product.productVariations[0],
     productVariations: product.productVariations.filter((variation: ProductVariationType) => variation.color === product.images[0].color),
   });
@@ -74,7 +91,7 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
 
   const handleAddToCart = async () => {
     if (!currentUser) {
-      setIsOpen(true)
+      router.push('/auth/login')
     } else {
       const cartRequest: CartRequest = {
         userId: currentUser.email,
@@ -95,9 +112,11 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
     }
   }
 
+
+
   const handleBuyNow = async () => {
     if (!currentUser) {
-      setIsOpen(true)
+      router.push('/auth/login')
     } else {
       const cartRequest: CartRequest = {
         userId: currentUser.email,
@@ -176,16 +195,22 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
     })
   }, [selectedProduct.buyQuantity])
 
-  console.log("selectedProduct", selectedProduct);
+
+
+  const quantity =
+    stockVariation?.find((item) => item.variationId === selectedProduct?.selectedVariation?.id)?.quantity || 0;
+
 
   return (
     <div className="z-30">
       <div className="flex flex-row pb-4 text-slate-700 font-normal rư">
         <Link className="hover:underline" href='/'>Trang chủ</Link>
         <p className="px-1">&gt;</p>
-        <Link className="hover:underline" href='/'>{product.category}</Link>
+        <Link className="hover:underline" href={`/category?q=${product.categorySlug}`}>
+          {product.categorySlug}
+        </Link>
         <p className="px-1">&gt;</p>
-        <Link className="hover:underline" href='/'>{product.brand}</Link>
+        <Link className="hover:underline" href='#'>{product.brand}</Link>
         <p className="px-1">&gt;</p>
         <Link className="hover:underline" href='#'>{truncateText(product.name, 30)}</Link>
       </div>
@@ -227,12 +252,13 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
             <span className="text-md font-medium">
               Đánh giá:
             </span>
-            <Rating value={5} precision={0.5} readOnly />
+            <Rating value={averageRating || 0} precision={0.5} readOnly />
 
             <div>(5)</div>
 
 
-            <div>Đã Bán {selectedProduct?.selectedVariation?.soldQuantity}</div>
+            {/* <div>Đã Bán {selectedProduct?.selectedVariation?.soldQuantity}</div> */}
+            <div>Đã Bán {product?.totalSold}</div>
 
 
           </div>
@@ -291,13 +317,18 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
             <div className="flex flex-row gap-10">
               <SetQuantity
                 selectedProduct={selectedProduct}
-                // cartCounter={cartCounter}
+                quantity={quantity}
                 handleQtyDecrease={handleQtyDecrease}
                 handleQtyIncrease={handleQtyIncrease}
                 handleQtyChange={handleQtyChange}
               />
-              <div className={selectedProduct?.selectedVariation?.quantity ? "text-teal-400 py-4 font-semibold" : "text-rose-400"}>
-                {selectedProduct?.selectedVariation?.quantity ? `${selectedProduct?.selectedVariation?.quantity} sản phẩm có sẳn` : "Hết hàng sản phẩm"}
+              <div className={quantity ? "text-teal-400 py-4 font-semibold" : "text-rose-400"}>
+
+                {/* {selectedProduct?.selectedVariation?.quantity ? `${selectedProduct?.selectedVariation?.quantity} sản phẩm có sẳn` : "Hết hàng sản phẩm"} */}
+                {quantity ? `${quantity} sản phẩm có sẳn` : "Hết hàng sản phẩm"}
+
+
+
               </div>
             </div>
             <div className="flex flex-row gap-3 w-[500px]">
@@ -329,10 +360,20 @@ const ProductDetails: React.FC<ProductDetailProps> = ({ product, currentUser }) 
         </RenderIf>
       </div >
 
+      {/* <RenderIf isTrue={productByCategories.length > 0} >
+        <div className="flex w-full h-auto overflow-hidden">
+          <ProducCarousel products={productByCategories} />
+        </div>
+      </RenderIf> */}
+
       <ProductInfo
         description={product?.description || ''}
         reviews={reviews}
       />
+
+
+
+
 
 
 

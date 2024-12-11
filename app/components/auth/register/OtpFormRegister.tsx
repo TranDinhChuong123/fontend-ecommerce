@@ -2,10 +2,10 @@
 
 import { useState, useRef } from 'react';
 import { toast } from "react-hot-toast";
-import Heading from '@/app/components/Heading';
-import Button from '@/app/components/Button';
+import Heading from '@/app/components/common/Heading';
+import Button from '@/app/components/common/Button';
 import axios from '@/services/axios/publicAxios';
-import { showToastSuccess } from '@/utils/util';
+import { showToastError, showToastSuccess } from '@/utils/util';
 import { fetchRegisterUserAPI } from '@/services/authService';
 import { useRouter } from 'next/navigation';
 interface OtpFormProps {
@@ -52,9 +52,12 @@ const OtpFormRegiter: React.FC<OtpFormProps> = ({ user }) => {
                 if (data) {
                     router.push('/auth/login');
                 }
+            } else {
+                showToastError("Xác Thực Không Thành Công");
             }
         } catch (error) {
             console.log(error);
+            showToastError("Xác Thực Không Thành Công");
         }
     };
 

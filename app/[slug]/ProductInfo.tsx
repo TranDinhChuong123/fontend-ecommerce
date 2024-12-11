@@ -1,6 +1,6 @@
 'use client'
 
-import Button from "@/app/components/Button";
+import Button from "@/app/components/common/Button";
 import RenderIf from "@/utils/RenderIf";
 import { useState } from "react";
 import ListRating from "./ListRating";

@@ -1,6 +1,3 @@
-
-
-
 'use client'
 
 import { useEffect, useState } from "react";
@@ -35,14 +32,19 @@ const UserAddressClient: React.FC = () => {
 
     useEffect(() => {
         const getListAddress = async () => {
-            const resData = await handleApiCall(axios.get(`/user/${email}/addresses`));
-            if (!resData) showToastError("List address empty");
-            setListAddress(resData?.data || []);
-            const defaultAddress = resData?.data.find((addr: AddressType) => addr.state);
-            console.log("defaultAddress", defaultAddress);
+            try {
+                const resData = await handleApiCall(axios.get(`/user/addresses`));
+                if (!resData) showToastError("List address empty");
+                setListAddress(resData?.data || []);
+                const defaultAddress = resData?.data.find((addr: AddressType) => addr.state);
+                console.log("defaultAddress", defaultAddress);
 
-            if (defaultAddress) {
-                setDefaultAddressId(defaultAddress.id);
+                if (defaultAddress) {
+                    setDefaultAddressId(defaultAddress.id);
+                }
+            }
+            catch (error) {
+                console.log(error);
             }
         };
         getListAddress();
@@ -52,7 +54,7 @@ const UserAddressClient: React.FC = () => {
         if (isFormSuccess) {
             setIsShowForm(false);
             const updateListAddress = async () => {
-                const resData = await handleApiCall(axios.get(`/user/${email}/addresses`));
+                const resData = await handleApiCall(axios.get(`/user/addresses`));
                 if (!resData) showToastError("List address empty");
                 setListAddress(resData.data || []);
                 setIsFormSuccess(false);
@@ -61,17 +63,27 @@ const UserAddressClient: React.FC = () => {
         }
     }, [isFormSuccess, email, axios]);
 
+    useEffect(() => {
+        if (selectedAddress && selectedAddress.id) {
+            handleConfirm();
+        }
+    }, [selectedAddress]);  
+    
+
     const handleConfirm = async () => {
-        if (selectedAddress && selectedAddress.id !== defaultAddressId) {
-            const resData = await handleApiCall(axios.get(`/user/${email}/addresses/${selectedAddress.id}/set-default`));
+        console.log("selectedAddress", selectedAddress);
+        
+        
+        if (selectedAddress && selectedAddress.id) {
+            const resData = await handleApiCall(axios.get(`/user/address/${selectedAddress.id}/set-default`));
             console.log("resData", resData);
+            console.log("selectedAddress", selectedAddress);
             if (!resData) showToastError("Set default address failed");
             showToastSuccess("Đặt địa chỉ mặc định thành công");
             setDefaultAddressId(selectedAddress.id);
 
         }
-        if (selectedAddress && selectedAddress.id == defaultAddressId) {
-        }
+
     };
 
 
@@ -111,7 +123,9 @@ const UserAddressClient: React.FC = () => {
                             type="radio"
                             checked={address.id === (selectedAddress ? selectedAddress.id : defaultAddressId)}
                             className="w-4 h-4" name="address"
-                            onChange={() => setSelectedAddress(address)}
+                            onChange={() => {
+                                setSelectedAddress(address); // Cập nhật selectedAddress
+                            }}
                         />
                         <div className="w-5/6 h-auto">
                             <p>{address.name}</p>

@@ -19,17 +19,22 @@ export type ImageType = {
 }
 
 export type UploadedImageType = {
-    color: string;
     colorCode: string;
     image: string;
 }
 
 
-const AddProductClient = () => {
+const AddProductPage = () => {
     const axios = useAxiosAuth();
     const [isLoading, setIsLoading] = useState(false)
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [imageProduct, setImageProduct] = useState<File | null>(null);
+    const [isColorChecked, setIsColorChecked] = useState(false);
+    const [isCapacityChecked, setIsCapacityChecked] = useState(false);
+    const [isSizeChecked, setIsSizeChecked] = useState(false);
+    const [colorValue, setColorValue] = useState("");
+    const [capacityValue, setCapacityValue] = useState("");
+    const [sizeValue, setSizeValue] = useState("");
 
     const {
         register,
@@ -46,17 +51,18 @@ const AddProductClient = () => {
             category: 'dien-thoai-smartphone',
             price: '',
             purchasePrice: '',
-            productVariation: '',
         },
 
     })
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const { name, description, brand, category, price, purchasePrice, productVariation } = data;
-        if(category === undefined || category === null ){
+        const { name, description, brand, category, price, purchasePrice } = data;
+
+        if (category === undefined || category === null) {
             showToastError("Vui lòng chọn danh mục");
         }
         if (!imageProduct) {
+            showToastError("Vui lòng chọn ảnh");
             return;
         }
         const formData = new FormData();
@@ -78,26 +84,51 @@ const AddProductClient = () => {
             category: createSlug(category),
             slug: createSlug(name),
             images: [{
-                color: productVariation?.color,
+                color: isColorChecked ? colorValue : undefined,
                 urlImage: resImages.data[0]
             }],
             productVariations: [
-                {
-                    color: productVariation?.colorValue,
-                    capacity: productVariation?.capacityValue,
-                    size: productVariation?.sizeValue,
-                    discountPercent: 0,
-                    price,
-                    purchasePrice
-                }
+                // {
+                //     color: isColorChecked ? colorValue : undefined,
+                //     capacity: isCapacityChecked ? capacityValue : undefined,
+                //     size: isSizeChecked ? sizeValue : undefined,
+                //     discountPercent: 0,
+                //     price,
+                //     purchasePrice
+                // }
             ]
 
         }
         const res = await handleApiCall(axios.post(`/product/create`, product));
+        if (!res?.data) {
+            showToastError("Thêm sản phẩm thất bại");
+            return
+        }
+
+        const resdraft = await handleApiCall(axios.post('/product-variation', {
+            productId: res.data.id || '',
+            urlImage: resImages.data[0],
+            color: isColorChecked ? colorValue : undefined,
+            capacity: isCapacityChecked ? capacityValue : undefined,
+            size: isSizeChecked ? sizeValue : undefined,
+            price,
+        }));
+        if (!resdraft) {
+            showToastError("Thêm sản phẩm thất bại");
+            return
+        }
 
         console.log("res", res);
+        setSizeValue('')
+        setColorValue('')
+        setCapacityValue('')
+        setIsColorChecked(false)
+        setIsCapacityChecked(false)
+        setIsSizeChecked(false)
+        setPreviewImage(null)
+        setImageProduct(null)
+        reset();
         showToastSuccess("Thêm sản phẩm thành công");
-        // reset();      
 
     }
 
@@ -123,29 +154,21 @@ const AddProductClient = () => {
         })
     }
 
-    const handleVariantSubmit = (data: DataVariant) => {
-        console.log(data);
-
-        return setCustomValue('productVariation', data)
-    };
-
-
-
 
     return (
-        <div className="flex flex-col items-center justify-center gap-4">
-            <div className="h-[95%] w-[90%] bg-white p-5" >
-                <div>
-                    <h1 className="text-2xl font-bold">Thêm sản phẩm</h1>
-                </div>
-            </div >
+        <div className="flex flex-col items-center justify-center gap-6 p-6 bg-gray-50 min-h-screen">
+            {/* Header Section */}
+            <div className="w-full bg-white shadow-lg p-6 rounded-md mb-6">
+                <h1 className="text-3xl font-bold text-gray-800">Thêm sản phẩm</h1>
+            </div>
 
-            <div className="h-[95%] w-[90%] bg-white p-7 flex flex-row items-center gap-2">
-                <div className="">
-                    <div className="mb-2 font-semibold">Chọn loại sản phẩm</div>
-                    <div className="flex flex-row gap-2 items-center flex-wrap">
-                        {categories.map((item) => {
-                            return <div key={item.lable} className="col-span-1 p-1">
+            {/* Category Section */}
+            <div className="w-full bg-white shadow-lg p-6 rounded-md mb-6">
+                <div>
+                    <div className="mb-4 font-semibold text-gray-700">Chọn loại sản phẩm</div>
+                    <div className="flex flex-wrap gap-4">
+                        {categories.map((item) => (
+                            <div key={item.lable} className="flex-shrink-0">
                                 <CategoryInput
                                     icon={item.icon}
                                     label={item.lable}
@@ -153,63 +176,51 @@ const AddProductClient = () => {
                                     onClick={(category) => setCustomValue('category', category)}
                                     slug={item.slug}
                                 />
-
                             </div>
-
-                        })}
-                        {/* <button className="flex flex-row border-l-[1.5px] items-center justify-center px-2 h-[50px]">
-
-                            <IoIosAddCircleOutline size={30} className="text-slate-700" />
-                            Thêm
-                        </button> */}
+                        ))}
                     </div>
                 </div>
             </div>
 
-            <div className="h-[98%] w-[95%] bg-white py-5 px-2 flex">
+            {/* Product Information Section */}
+            <div className="w-full bg-white shadow-lg p-6 rounded-md mb-6 flex flex-col md:flex-row gap-6">
+                {/* Image Upload Section */}
+                <div className="w-full md:w-1/3 flex flex-col items-center justify-center gap-4">
+                    <input
+                        id="fileInput"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
+                    />
 
-                <div className="w-[30%] px-1">
-                    <div className="flex flex-col gap-1 items-center w-full">
-                        <input
-                            id="fileInput"
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleFileChange}
-                        />
-
-                        <div className="preview-container flex flex-row mt-5 h-[200px] w-[200px] gap-2 relative justify-center">
-                            {previewImage ? (
-                                <Image
-                                    key={previewImage}
-                                    src={previewImage}
-                                    alt={`preview ${previewImage}`}
-                                    layout="fill"
-                                    objectFit="contain"
-                                    className="bg-contain"
-                                    unoptimized={true}
-                                />
-                            ) : (
-                                <div className="h-[200px] w-[180px] border-[2px] border-dashed flex items-center justify-center">
-                                    <MdUpload size={45} className="text-slate-300" />
-                                </div>
-                            )}
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={() => document.getElementById('fileInput')?.click()} // Mở hộp thoại chọn file khi bấm nút
-                            className="bg-blue-500 text-white py-2 px-4  mt-5"
-                        >
-                            Upload hình ảnh
-                        </button>
-
+                    <div className="w-52 h-52 bg-gray-100 border-2 border-dashed flex items-center justify-center relative overflow-hidden">
+                        {previewImage ? (
+                            <Image
+                                key={previewImage}
+                                src={previewImage}
+                                alt={`preview ${previewImage}`}
+                                layout="fill"
+                                objectFit="contain"
+                                className="bg-contain"
+                                unoptimized
+                            />
+                        ) : (
+                            <MdUpload size={45} className="text-gray-300" />
+                        )}
                     </div>
+
+                    <button
+                        type="button"
+                        onClick={() => document.getElementById('fileInput')?.click()}
+                        className="bg-blue-500 text-white py-2 px-6 rounded-md mt-4 hover:bg-blue-600 transition"
+                    >
+                        Upload hình ảnh
+                    </button>
                 </div>
 
-                <div className="w-[60%] flex flex-col gap-2">
-                    <div className="mb-2 font-semibold">Thông tin sản phẩm</div>
-
+                {/* Product Info Section */}
+                <div className="w-full md:w-2/3 flex flex-col gap-4">
                     <Input
                         id="name"
                         label="Tên sản phẩm"
@@ -217,21 +228,18 @@ const AddProductClient = () => {
                         register={register}
                         errors={errors}
                         required
-
                     />
 
-
-                    <div className="flex flex-row gap-2">
-
+                    <div className="flex flex-row gap-4">
                         <Input
                             id="price"
                             label="Giá dự kiến ban đầu"
                             disabled={isLoading}
-                            register={register} errors={errors}
+                            register={register}
+                            errors={errors}
                             required
                             type="number"
                         />
-
                     </div>
 
                     <Input
@@ -247,34 +255,104 @@ const AddProductClient = () => {
                         id="description"
                         label="Mô tả"
                         disabled={isLoading}
-                        register={register} errors={errors}
+                        register={register}
+                        errors={errors}
                         required
                         placeholder="Mô tả"
                     />
                 </div>
-
-                <div className="w-[40%] ">
-                    <VariantSelector onSubmit={handleVariantSubmit} />
-                </div>
-
-
-
             </div>
 
-            <div className="w-[95%] bg-white py-5 px-2 flex items-center justify-center">
-                <button className="bg-sky-400 text-white py-2 px-20 text-lg"
+            {/* Attributes Section */}
+            <div className="w-full bg-white shadow-lg p-6 rounded-md mb-6">
+                <h1 className="font-semibold text-gray-700 mb-4">Thêm thuộc tính</h1>
 
+                <div className="space-y-4">
+                    {/* Color */}
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="color"
+                                checked={isColorChecked}
+                                onChange={(e) => setIsColorChecked(e.target.checked)}
+                                className="mr-2"
+                            />
+                            <label htmlFor="color" className="text-gray-600">Màu sắc</label>
+                        </div>
+                        {isColorChecked && (
+                            <input
+                                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                id="colorValue"
+                                placeholder="Nhập màu sắc"
+                                value={colorValue}
+                                onChange={(e) => setColorValue(e.target.value)}
+                            />
+                        )}
+                    </div>
+
+                    {/* Capacity */}
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="capacity"
+                                checked={isCapacityChecked}
+                                onChange={(e) => setIsCapacityChecked(e.target.checked)}
+                                className="mr-2"
+                            />
+                            <label htmlFor="capacity" className="text-gray-600">Dung lượng</label>
+                        </div>
+                        {isCapacityChecked && (
+                            <input
+                                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                id="capacityValue"
+                                placeholder="Nhập dung lượng"
+                                value={capacityValue}
+                                onChange={(e) => setCapacityValue(e.target.value)}
+                            />
+                        )}
+                    </div>
+
+                    {/* Size */}
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="size"
+                                checked={isSizeChecked}
+                                onChange={(e) => setIsSizeChecked(e.target.checked)}
+                                className="mr-2"
+                            />
+                            <label htmlFor="size" className="text-gray-600">Kích thước</label>
+                        </div>
+                        {isSizeChecked && (
+                            <input
+                                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                id="sizeValue"
+                                placeholder="Nhập kích thước"
+                                value={sizeValue}
+                                onChange={(e) => setSizeValue(e.target.value)}
+                            />
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="w-full flex items-center justify-center py-6">
+                <button
                     onClick={handleSubmit(onSubmit)}
+                    className="bg-sky-400 text-white py-3 px-16 text-lg font-semibold rounded-lg hover:bg-sky-500 transition"
                 >
                     Thêm sản phẩm
                 </button>
-
             </div>
+        </div>
 
-        </div >
 
 
     )
 }
 
-export default AddProductClient
+export default AddProductPage

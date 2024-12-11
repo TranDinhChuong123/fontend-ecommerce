@@ -2,8 +2,8 @@
 import React from 'react'
 import NavBar from '../components/nav/NavBar'
 import Categories from '../components/nav/Categories'
-import Container from '../components/Container'
-import HomeBanner from '../components/HomeBanner'
+import Container from '../components/common/Container'
+import HomeBanner from '../home/HomeBanner'
 import { fetchProductsWithCategoryAPI, fetchProductsWithDiscountAPI, fetchProductsWithFiltersAPI, fetchProductsWithTotalSoldAPI } from '@/services/productService'
 import ProductCard from '../components/products/ProductCard'
 import RenderIf from '@/utils/RenderIf'
@@ -20,11 +20,11 @@ const CategoryPage = async ({ searchParams }: CategoryPageProps) => {
     if (q === 'san-pham-moi') {
         products = await fetchProductsWithFiltersAPI(page);
     } else if (q === 'san-pham-sale') {
-        products = await fetchProductsWithDiscountAPI(20, page);
+        products = await fetchProductsWithDiscountAPI(5, page);
     } else if (q === 'san-pham-ban-chay') {
         products = await fetchProductsWithTotalSoldAPI(page);
     } else if (q === 'san-pham-gia-tot') {
-        products = await fetchProductsWithDiscountAPI(40, page);
+        products = await fetchProductsWithDiscountAPI(7, page);
     }
     return (
         <HomePageLayout

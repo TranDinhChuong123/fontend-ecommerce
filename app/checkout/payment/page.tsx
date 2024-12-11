@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import FormWrap from '../../components/FormWrap'
+import FormWrap from '../../components/common/FormWrap'
 import PaymentClient from './PaymentClient'
-import Container from '../../components/Container'
+import Container from '../../components/common/Container'
 import NavBar from '@/app/components/nav/NavBar'
 
 const CheckoutPaymentPage = () => {

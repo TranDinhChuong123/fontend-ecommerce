@@ -1,6 +1,6 @@
 
 import { DynamicProductType, ImageType, ProductVariationType } from "@/types/ProductTypes";
-import Button from "../Button";
+import Button from "../common/Button";
 
 interface SetColorProps {
     product: any;

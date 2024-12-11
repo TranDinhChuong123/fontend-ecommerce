@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { toast } from "react-hot-toast";
-import Heading from '@/app/components/Heading';
-import Button from '@/app/components/Button';
+import Heading from '@/app/components/common/Heading';
+import Button from '@/app/components/common/Button';
 import axios from '@/services/axios/publicAxios';
 import { showToastSuccess } from '@/utils/util';
 import { fetchRegisterUserAPI } from '@/services/authService';
@@ -49,8 +49,9 @@ const OtpFormFGPassword: React.FC<OtpFormProps> = ({ email, setSuccess }) => {
             setIsSubmitting(true)
             const res = await axios.post(`/auth/verify-code?email=${email}&code=${result}`);
             console.log("res", res);
-            if(res){
+            if (res) {
                 showToastSuccess("Xác Thực Thành Công");
+                router.push('/auth/forgot-password?step=reset-password');
                 setSuccess(true)
             }
             setIsSubmitting(false)
@@ -85,6 +86,7 @@ const OtpFormFGPassword: React.FC<OtpFormProps> = ({ email, setSuccess }) => {
             <Button
                 label={isSubmitting ? "Đang Xác Thực..." : "Xác Thực OTP"}
                 onClick={() => handleSubmit()}
+
                 disabled={isSubmitting}
             />
         </div>

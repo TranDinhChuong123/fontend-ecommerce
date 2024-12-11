@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import Heading from "../../components/Heading"
+import Heading from "../../components/common/Heading"
 import Input from "../../components/inputs/Input"
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form"
-import Button from "../../components/Button"
+import Button from "../../components/common/Button"
 import Link from "next/link"
 import { AiOutlineGoogle } from "react-icons/ai"
 import { signIn } from "next-auth/react"
@@ -42,7 +42,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     })
 
     useEffect(() => {
-        // Reset errors when the component is mounted or refreshed
         reset();
     }, [reset]);
 
@@ -72,24 +71,36 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     useEffect(() => {
         if (currentUser) {
             const user = decodeToken(currentUser?.accessToken || "")
-            if (user.role === "ROLE_ADMIN") {
+            if (user?.role === "ROLE_ADMIN") {
                 router.push('/admin/dashboard');
                 router.refresh();
             } else {
                 router.push('/');
                 router.refresh();
+
             }
         }
     }, [currentUser, router])
 
-    // if (currentUser) {
-    //     return <p className="text-center">Logged in. Redirecting...</p>
-    // }
-    // console.log("currentUser", currentUser);
-
+    if (currentUser) {
+        return <p className="text-center">Logged in. Redirecting...</p>
+    }
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     return (
         <>
-            <Heading title="Đăng Nhập EconoMart" />
+            <div className="flex flex-col items-center space-y-2 text-center">
+                <h1
+                    className="font-bold text-3xl text-gray-800 hover:text-gray-600 hover:cursor-pointer transition duration-200"
+                    onClick={() => router.push('/')}
+                >
+                    EconoMart
+                </h1>
+
+                <h2 className="text-xl text-gray-500 font-medium">
+                    Đăng Nhập
+                </h2>
+            </div>
+
             {Object.keys(errors).length > 0 && (
                 <p className="text-red-500 text-center mt-2">Vui lòng kiểm tra thông tin đăng nhập</p>
             )}
@@ -127,6 +138,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
             </div>
 
 
+
             <div className=" flex items-center w-full h-2">
                 <hr className="flex-grow h-px" />
                 <span className="mx-4 text-gray-500">Hoặc</span>
@@ -137,16 +149,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                 <Button
                     label="Google"
                     imageIcon={{ src: GoogleIcon, alt: "Google Icon" }}
-                    onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000' })}
+                    onClick={() => signIn('google', { callbackUrl: '/' })}
                     small
                     outline
-
-
                 />
                 <Button
                     label="Facebook"
                     icon={FaFacebook}
-                    onClick={() => signIn('facebook', { callbackUrl: 'http://localhost:3000' })}
+                    onClick={() => signIn('facebook', { callbackUrl: '/' })}
                     small
                     outline
                     styleIcon="text-blue-600"

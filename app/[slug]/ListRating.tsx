@@ -2,7 +2,7 @@
 
 import { Rating } from "@mui/material";
 
-import Avatar from "@/app/components/Avatar";
+import Avatar from "@/app/components/common/Avatar";
 import Image from "next/image";
 import { getFormattedDate } from "@/utils/util";
 import RenderIf from "@/utils/RenderIf";
@@ -12,8 +12,6 @@ interface ListRatingProps {
 }
 
 const ListRating: React.FC<ListRatingProps> = ({ ratings }) => {
-    console.log("ratings", ratings);
-
 
     return (
         <div>
@@ -29,7 +27,7 @@ const ListRating: React.FC<ListRatingProps> = ({ ratings }) => {
                                     <div className="font-semibold">{rating?.username}</div>
                                     <div className="font-light">{getFormattedDate(rating?.createdAt)}</div>
 
-                                    <div className="flex flex-row items-center gap-2 py-4">
+                                    <div className="flex flex-row items-center gap-2 py-4 w-[300px]">
                                         <Rating value={rating.rating} readOnly />
                                         <div>|</div>
                                         <div>{rating?.color} ,</div>
@@ -51,8 +49,6 @@ const ListRating: React.FC<ListRatingProps> = ({ ratings }) => {
                                     <div className="border-l-[5px] border-[1px] border-l-red-500 flex flex-col justify-start items-start p-4">
 
                                         <Image className="" src={rating?.productImage} alt="image" width="100" height="100" />
-
-
                                         <p>{rating?.productName}</p>
 
                                     </div>

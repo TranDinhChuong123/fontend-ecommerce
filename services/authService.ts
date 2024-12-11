@@ -6,7 +6,7 @@ export const fetchUserExistsByEmailAPI = async (email: string) => {
     return data;
 }
 
-export const fetchRegisterUserAPI = async (user: User) => {
+export const fetchRegisterUserAPI = async (user: any) => {
 
     const registerData = {
         name: user.name,
@@ -28,6 +28,15 @@ export const fetchloginUserAPI = async (username: string, password: string) => {
     const { data } = await publicAxios.post('/auth/login', loginData);
     return data;
 }
+
+export const fetchloginUserWithProviderAPI = async (username: string) => {
+    const loginData = {
+        username: username,
+    }
+    const { data } = await publicAxios.post('/auth/login-provider', loginData);
+    return data;
+}
+
 
 export const fetchRefreshTokenAPI = async (refreshToken: string) => {
     const { data } = await publicAxios.post('/auth/refresh-token', {}, {

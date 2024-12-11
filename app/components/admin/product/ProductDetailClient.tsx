@@ -4,7 +4,6 @@ import useAxiosAuth from '@/hooks/useAxiosAuth';
 import handleApiCall from '@/services/handleApiCall';
 import RenderIf from '@/utils/RenderIf';
 import Image from 'next/image';
-
 import { DataGrid } from '@mui/x-data-grid';
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineUpdate } from "react-icons/md";
@@ -32,38 +31,14 @@ const ProductDetailClient: React.FC<IPrams> = ({ productId }) => {
 
     const axios = useAxiosAuth();
 
-    const columns = [
-        { field: 'id', headerName: 'ID', width: 100 },
-        { field: 'color', headerName: 'Màu sắc', width: 150 },
-        { field: 'size', headerName: 'Kích thước', width: 150 },
-        { field: 'price', headerName: 'Giá', width: 150 },
-        { field: 'discountPercent', headerName: '(%) giảm giá', width: 100 },
-        { field: 'quantity', headerName: 'Số lượng', width: 100, editable: true },
-        { field: 'soldQuantity', headerName: 'Đã bán', width: 100 },
-        {
-            field: 'action',
-            headerName: 'Hành động',
-            width: 100,
-            renderCell: () => (
-                <button
-                    color="primary"
-                    onClick={() => toggleModal()} // Gọi hàm xử lý khi nhấn nút
-                >
-                    <CiEdit size={20} />
-                </button>
-            ),
-        },
 
-
-
-    ]
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await handleApiCall(axios.get(`/product/${productId}`));
                 console.log('response', response);
 
-                setProduct(response.data);
+                setProduct(response?.data || []);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching product:', error);
@@ -71,6 +46,65 @@ const ProductDetailClient: React.FC<IPrams> = ({ productId }) => {
         };
         fetchProduct();
     }, [productId]);
+    console.log("product", product.productVariations);
+
+    const columns = [
+        { field: 'id', headerName: 'ID', flex: 2 },
+        {
+            field: 'image',
+            headerName: 'Hình ảnh',
+            flex: 1,
+            renderCell: (params: any) => (
+                params.row? (
+                    <div className="relative w-16 h-16">
+                        <Image
+                            src={product.images.find((iamge: any) => iamge.color === params.row.color)?.urlImage || ''}
+                            alt="Product Variation Image"
+                            fill
+                            className="object-cover rounded"
+                        />
+                    </div>
+                ) : (
+                    <div className="relative w-16 h-16">
+                    <Image
+                        src={product.iamges[0].urlImage || ''}
+                        alt="Product Variation Image"
+                        fill
+                        className="object-cover rounded"
+                    />
+                </div>
+                )
+            ),
+        },
+        product.productVariations?.[0]?.color && { field: 'color', headerName: 'Màu sắc',  flex: 1, editable: true},
+        product.productVariations?.[0]?.capacity && { field: 'capacity', headerName: 'Dung lượng',  flex: 1, editable: true },
+        product.productVariations?.[0]?.size && { field: 'size', headerName: 'Kích thước',  flex: 1, editable: true },
+        { field: 'price', headerName: 'Giá',  flex: 1, editable: true },
+        { field: 'discountPercent', headerName: '% Khuyến mãi',  flex: 1, editable: true },
+        
+
+        // {
+        //     field: 'action',
+        //     headerName: 'Cập nhật',
+        //     width: 100,
+        //     renderCell: () => (
+        //         <button
+        //             color="primary"
+        //             onClick={() => toggleModal()} // Gọi hàm xử lý khi nhấn nút
+        //         >
+        //             <CiEdit size={20} />
+        //             {/* Thay đổi */}
+        //         </button>
+        //     ),
+        // },
+
+
+
+    ].filter(Boolean);
+
+    const validColumns = columns.filter(column => column !== null);
+
+    
 
     if (loading) {
         return (
@@ -123,7 +157,7 @@ const ProductDetailClient: React.FC<IPrams> = ({ productId }) => {
 
             <div className='w-[95%] my-10 bg-white'>
                 <DataGrid
-                    columns={columns}
+                    columns={validColumns}
                     rows={product?.productVariations}
                     initialState={{
                         pagination: {

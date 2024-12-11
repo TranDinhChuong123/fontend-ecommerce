@@ -7,7 +7,6 @@ import { getSession, useSession } from "next-auth/react";
 type CartContextType = {
     handleAddProductToCart: (product: CartRequest) => boolean,
     handleAddProductBuyNow: (product: CartRequest) => boolean,
-
     handleRemoveProductsFromCart: (product: CartRemoveRequest) => boolean,
     handleUpdateProductQuantity: (product: any) => boolean,
     handleCartProductsLength: () => any,
@@ -33,15 +32,13 @@ export const CartContextProvider = (props: any) => {
 
     const handleCartProductsLength = useCallback(async (): Promise<any> => {
         const session = await getSession();
-        const resData = await handleApiCall(axiosAuth.get(`/cart/${session?.user.email}/cart-products-length`));
+        const resData = await handleApiCall(axiosAuth.get(`/cart/cart-products-length`));
         if (!resData) {
             return 0;
         }
         return resData;
 
     }, [axiosAuth]);
-
-
 
 
 

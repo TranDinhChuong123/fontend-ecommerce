@@ -1,19 +1,17 @@
-
-
-
 'use client'
 
 import React, { useState } from 'react';
 import NavBar from '../components/nav/NavBar';
 import Categories from '../components/nav/Categories';
-import Container from '../components/Container';
-import HomeBanner from '../components/HomeBanner';
+import Container from '../components/common/Container';
+import HomeBanner from './HomeBanner';
 import ProductCard from '../components/products/ProductCard';
 import { Pagination, Select, MenuItem } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import RenderIf from '@/utils/RenderIf';
 import { calculateDiscountedPrice } from '@/utils/util';
 import { MdSearchOff } from "react-icons/md";
+import Footer from '../components/footer/Footer';
 
 interface Props {
     products: any[];
@@ -25,7 +23,7 @@ interface Props {
     valueSearch?: string;
 }
 
-const HomePageLayout: React.FC<Props> = ({ products, currentPage, categoryQuery, label, namePage, collectionQuery, valueSearch ='' }) => {
+const HomePageLayout: React.FC<Props> = ({ products, currentPage, categoryQuery, label, namePage, collectionQuery, valueSearch = '' }) => {
     const [sortOrder, setSortOrder] = useState<string>('default');
     const router = useRouter();
 
@@ -51,7 +49,7 @@ const HomePageLayout: React.FC<Props> = ({ products, currentPage, categoryQuery,
 
     return (
         <div>
-            <NavBar valueSearch={valueSearch} query={collectionQuery} onSearch={handleOnSearch} />
+            <NavBar isPageHome valueSearch={valueSearch} query={collectionQuery} onSearch={handleOnSearch} />
             <Categories query={categoryQuery} />
             <div className="p-8">
                 <Container>
@@ -91,9 +89,11 @@ const HomePageLayout: React.FC<Props> = ({ products, currentPage, categoryQuery,
                             2xl:grid-cols-6
                             gap-8"
                     >
-                        {sortedProducts.map((product) => (
-                            <ProductCard key={product?.id} product={product} />
-                        ))}
+                        <RenderIf isTrue={sortedProducts.length > 0}>
+                            {sortedProducts.map((product) => (
+                                <ProductCard key={product?.id} product={product} />
+                            ))}
+                        </RenderIf>
                     </div>
 
                     <div className="flex flex-col justify-center items-center">
@@ -148,6 +148,7 @@ const HomePageLayout: React.FC<Props> = ({ products, currentPage, categoryQuery,
                     </div>
                 </Container>
             </div>
+            <Footer />
         </div>
     );
 };

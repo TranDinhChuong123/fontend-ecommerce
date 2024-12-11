@@ -1,13 +1,9 @@
 import NextAuth from "next-auth";
-// providers
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-
 import { AuthOptions } from "next-auth"
-import { fetchloginUserAPI, fetchRefreshTokenAPI, fetchRegisterUserAPI, fetchUserExistsByEmailAPI } from "@/services/authService";
-import generatePasswordFromEmail from "@/utils/generatePasswordFromEmail";
+import { fetchloginUserAPI, fetchloginUserWithProviderAPI, fetchRegisterUserAPI, fetchUserExistsByEmailAPI } from "@/services/authService";
 
 export const authOptions: AuthOptions = {
 
@@ -63,7 +59,7 @@ export const authOptions: AuthOptions = {
                 const email = token.email
                 const resData = await fetchUserExistsByEmailAPI(token.email);
                 if (resData) {
-                    const { accessToken, refreshToken } = await fetchloginUserAPI(token.email, token.email);
+                    const { accessToken, refreshToken } = await fetchloginUserWithProviderAPI(token.email);
                     return { ...token, accessToken, refreshToken };
                 } else {
                     const dataUser = {
@@ -85,8 +81,6 @@ export const authOptions: AuthOptions = {
         },
 
     }
-
-
 
 }
 

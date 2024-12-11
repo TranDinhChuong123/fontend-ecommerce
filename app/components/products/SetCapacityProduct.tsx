@@ -1,5 +1,5 @@
 import { DynamicProductType, ProductVariationType } from "@/types/ProductTypes";
-import Button from "../Button";
+import Button from "../common/Button";
 
 interface SetColorProps {
     productVariations: ProductVariationType[];
@@ -25,8 +25,8 @@ const SetCapacityProduct: React.FC<SetColorProps> = ({
                             outline
                             custom={`${productVariation.capacity === selectedProduct.selectedVariation.capacity ? "border-[2px] border-teal-400" : "border-[2px] border-white"}`}
                             styleIcon="w-10 h-10"
-                            
-                
+
+
                             onClick={() => handleCapacityProduct(productVariation)}
                         />
 

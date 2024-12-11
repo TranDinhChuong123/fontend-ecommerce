@@ -3,14 +3,10 @@ import handleApiCall from './handleApiCall';
 import slugify from 'slugify';
 
 export const fetchProductsWithFiltersAPI = async (page: number = 1, limit: number = 30) => {
-    
-    return handleApiCall(publicAxios.post('/product', { page , limit }));
+    return handleApiCall(publicAxios.post('/product', { page, limit }));
 }
 
-// export const fetchProductByIdAPI = async (productId: string): Promise<any> => {
-//     return handleApiCall(publicAxios.get(`/product/${productId}`));
-// }
-// Cập nhật API để nhận token từ bên ngoài
+
 export const fetchProductByIdAPI = async (productId: string, token?: string): Promise<any> => {
     const headers: Record<string, string> = {};
     if (token) {
@@ -21,7 +17,7 @@ export const fetchProductByIdAPI = async (productId: string, token?: string): Pr
 
 
 export const fetchProductsWithDiscountAPI = async (discount: number, page: number = 1) => {
-    return handleApiCall(publicAxios.post('/product', {page, productFilter: { discountPercent: discount } }));
+    return handleApiCall(publicAxios.post('/product', { page, productFilter: { discountPercent: discount } }));
 }
 
 export const fetchProductsWithTotalSoldAPI = async (page: number = 1) => {
@@ -32,26 +28,32 @@ export const fetchProductsWithTotalSoldAPI = async (page: number = 1) => {
     }));
 }
 
-export const fetchProductsWithSearchAPI = async (searchValue: string, page: number = 1) => {
+export const fetchProductsWithSearchAPI = async (searchValue: string, page: number = 1, token?: string) => {
+    const headers: Record<string, string> = {};
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    console.log("token :", token);
+
     return handleApiCall(publicAxios.post('/product', {
         page,
         productFilter: {
             name: searchValue,
             brand: searchValue,
-            category: slugify(searchValue, { lower: true }),
+            categorySlug: slugify(searchValue, { lower: true }),
             slug: slugify(searchValue, { lower: true })
         }
-    }));
+    }, token ? { headers } : {}));
 }
 
-export const fetchProductsWithCategoryAPI = async (categoryQuery: string= 'thoi-trang-nam', page: number, searchValue: string) => {
-    return handleApiCall(publicAxios.post('/product', {
+export const fetchProductsWithCategoryAPI = async (categoryQuery: string = 'thoi-trang-nam', page: number, searchValue: any) => {
+    return handleApiCall(publicAxios.post('/product/category-slug', {
         page,
         productFilter: {
-            category: categoryQuery,
+            categorySlug: categoryQuery,
             name: searchValue,
             brand: searchValue,
-            slug: slugify(searchValue, { lower: true })
+            slug: slugify(searchValue || '', { lower: true })
         }
     }));
 }

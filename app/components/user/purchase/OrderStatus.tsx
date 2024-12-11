@@ -11,6 +11,9 @@ const OrderStatus = ({ orderDetail }: { orderDetail: any }) => (
     <RenderIf isTrue={orderDetail?.orderStatus === "PENDING"}>
       <span>Đơn hàng chờ xác nhận</span>
     </RenderIf>
+    <RenderIf isTrue={orderDetail?.orderStatus === "SHIPPING"}>
+      <span>Đơn hàng đang giao</span>
+    </RenderIf>
     <RenderIf isTrue={orderDetail?.orderStatus === "CANCELED"}>
       <span>Đơn hàng đã hủy</span>
       <span className="text-gray-500">({getFormattedDate(orderDetail?.cancelDate)})</span>

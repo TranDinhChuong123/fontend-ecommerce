@@ -1,6 +1,6 @@
 
 import { DynamicProductType, ProductVariationType } from "@/types/ProductTypes";
-import Button from "../Button";
+import Button from "../common/Button";
 
 interface SetColorProps {
     productVariations: ProductVariationType[];
@@ -16,8 +16,8 @@ const SetSizeProduct: React.FC<SetColorProps> = ({
 }) => {
 
     console.log("productVariations123", productVariations);
-    
-    return (      
+
+    return (
         <div>
 
             <div className="flex gap-1 items-center">

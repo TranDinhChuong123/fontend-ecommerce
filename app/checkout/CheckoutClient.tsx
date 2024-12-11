@@ -8,7 +8,7 @@ import RenderIf from '@/utils/RenderIf'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { IoBagCheckOutline } from "react-icons/io5"
-import Button from '../components/Button'
+import Button from '../components/common/Button'
 import AddressInfo from '../components/checkout/AddressInfo'
 import CartSummary from '../components/checkout/CartSummary'
 import EmptyCart from '../components/checkout/EmptyCart'
@@ -48,15 +48,15 @@ const CheckoutClient: React.FC<Props> = ({ method }) => {
         setIsOpen((prev) => !prev);
     }, []);
 
-    const totalWithShipping = useMemo(() => {
-        const shippingFee =
-            selectedShippingMethod === "FAST"
-                ? 30000
-                : selectedShippingMethod === "EXPRESS"
-                    ? 50000
-                    : 15000;
-        return totalAmount + shippingFee;
-    }, [selectedShippingMethod, totalAmount]);
+    const feeShip = useMemo(() => {
+        return selectedShippingMethod === "FAST"
+            ? 30000
+            : selectedShippingMethod === "EXPRESS"
+                ? 50000
+                : 15000;
+    }, [selectedShippingMethod]);
+
+
 
     const handleCheckout = async () => {
         if (selectedPaymentMethod === 'CREDIT_CARD') {
@@ -65,7 +65,7 @@ const CheckoutClient: React.FC<Props> = ({ method }) => {
 
             const resData = await handleApiCall(axiosAuth.post('/order/create', {
                 feeShip: 30000,
-                totalPrice: totalAmount + 30000,
+                totalPrice: totalAmount + feeShip,
                 orderProducts: cartProducts,
                 note,
                 payment: {
@@ -82,8 +82,8 @@ const CheckoutClient: React.FC<Props> = ({ method }) => {
             console.log("resData", resData);
         } else if (selectedPaymentMethod === "WALLET") {
             const resData = await handleApiCall(axiosAuth.post('/order/create', {
-                feeShip: 30000,
-                totalPrice: totalAmount + 30000,
+                feeShip: feeShip,
+                totalPrice: totalAmount + feeShip,
                 orderProducts: cartProducts,
                 payment: {
                     paymentMethod: 'WALLET',
@@ -100,13 +100,7 @@ const CheckoutClient: React.FC<Props> = ({ method }) => {
 
     }
 
-    const feeShip = useMemo(() => {
-        return selectedShippingMethod === "FAST"
-            ? 30000
-            : selectedShippingMethod === "EXPRESS"
-                ? 50000
-                : 15000;
-    }, [selectedShippingMethod]);
+
 
     if (loading) return <LoadingComponent />;
     if (!cartProducts || cartProducts.length === 0) return <EmptyCart />;
@@ -128,6 +122,16 @@ const CheckoutClient: React.FC<Props> = ({ method }) => {
         <div className="text-slate-700">
             <AddressInfo address={address} onChangeAddress={() => setIsOpen(true)} />
             <hr className='my-3' />
+            <div
+                className="grid grid-cols-5 text-sm font-semibold gap-4 pb-2 items-center mt-8 px-8 py-4 
+               bg-gray-100 rounded-md shadow-md border border-gray-200"
+            >
+                <div className="col-span-2 justify-self-start text-gray-700 uppercase">Sản Phẩm</div>
+                <div className="justify-self-center text-gray-700 uppercase">Đơn Giá</div>
+                <div className="justify-self-center text-gray-700 uppercase">Số Lượng</div>
+                <div className="justify-self-end text-gray-700 uppercase">Số Tiền</div>
+            </div>
+
             <ProductList products={cartProducts} />
             <hr className='my-3' />
             <PaymentMethods

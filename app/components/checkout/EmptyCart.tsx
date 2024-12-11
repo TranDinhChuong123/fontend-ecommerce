@@ -1,7 +1,7 @@
 import { HiShoppingBag } from "react-icons/hi2";
 
 import Link from "next/link";
-import Button from "../Button";
+import Button from "../common/Button";
 
 const EmptyCart: React.FC = () => (
     <div className="flex flex-col items-center m-20">

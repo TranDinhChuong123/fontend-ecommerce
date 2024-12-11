@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react"
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import PaymentForm from "./PaymentForm"
-import Button from "../../components/Button"
+import Button from "../../components/common/Button"
 import handleApiCall from "@/services/handleApiCall"
 import useAxiosAuth from "@/hooks/useAxiosAuth"
 import LoadingComponent from "@/app/components/common/LoadingComponent"

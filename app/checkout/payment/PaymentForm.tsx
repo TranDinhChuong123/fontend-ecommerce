@@ -6,8 +6,8 @@ import { AddressElement, PaymentElement, useElements, useStripe } from "@stripe/
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { formatPrice } from "@/utils/util"
-import Heading from "@/app/components/Heading"
-import Button from "@/app/components/Button"
+import Heading from "@/app/components/common/Heading"
+import Button from "@/app/components/common/Button"
 import handleApiCall from "@/services/handleApiCall"
 import useAxiosAuth from "@/hooks/useAxiosAuth"
 
@@ -113,7 +113,7 @@ const PaymentForm: React.FC<CheckoutFormProps> = ({
             <PaymentElement id="payment-element" options={{ layout: 'tabs' }} />
 
             <div className="py-4 text-center text-slate-700 text-xl font-bold">
-                Tổng: {formatPrice(totalPrice+ feeShip)}
+                Tổng: {formatPrice(totalPrice + feeShip)}
             </div>
 
             <Button

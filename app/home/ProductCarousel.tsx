@@ -1,5 +1,12 @@
 'use client';
 
+// Thêm vào tệp gốc hoặc trong component ProducCarousel
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/autoplay';
+
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ProductCard from '../components/products/ProductCard';
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
@@ -8,13 +15,15 @@ interface Props {
 }
 
 const ProducCarousel: React.FC<Props> = ({ products }) => {
+    if (products.length === 0 || !products) return null
     return (
-        <Swiper 
+        <Swiper
             modules={[Autoplay, Navigation, Pagination]}
             autoplay={{ delay: 3000 }}
-            spaceBetween={10}  // Khoảng cách giữa các slide
+
+            spaceBetween={20}  // Khoảng cách giữa các slide
             slidesPerView={5}  // Số lượng sản phẩm hiển thị trên mỗi trang
-            slidesPerGroup={5} // Di chuyển 5 sản phẩm mỗi lần
+            slidesPerGroup={3} // Di chuyển 5 sản phẩm mỗi lần
             loop={true}         // Lặp lại carousel
             grabCursor={true}  // Hiển thị con trỏ "kéo" khi người dùng di chuột vào
 

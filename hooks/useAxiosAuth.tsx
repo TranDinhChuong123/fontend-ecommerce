@@ -12,6 +12,7 @@ const useAxiosAuth = () => {
             if (session?.user?.accessToken) {
                 config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
             }
+            // console.log(`API Request: ${config.method?.toUpperCase()} ${config.baseURL || ''}${config.url}`);
             return config;
         });
 
@@ -22,7 +23,7 @@ const useAxiosAuth = () => {
                 if (error.response) {
                     if (error.response.status === 401 && !originalRequest._retry) {
                         originalRequest._retry = true;
-                        await refreshToken(); 
+                        await refreshToken();
                         const session = await getSession();
                         if (session?.user?.accessToken) {
                             originalRequest.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
@@ -37,7 +38,7 @@ const useAxiosAuth = () => {
                     }
                 }
 
-                return Promise.reject(new Error(error.response.data || error || 'Something went wrong'));
+                return Promise.reject(new Error(error || 'Something went wrong'));
             }
         );
         // Dọn dẹp interceptor khi component unmount

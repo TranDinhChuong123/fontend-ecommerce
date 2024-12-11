@@ -34,8 +34,8 @@ const TextArea: React.FC<TextAreaProps> = ({
                     border rounded-md transition 
                     outline-none font-light max-h-[100px] min-h-[100px]
                     disabled:cursor-not-allowed disabled:opacity-70
-                    ${errors[id] ? 'border-rose-500' : 'border-slate-500'}
-                    ${errors[id] ? 'focus:border-rose-500' : 'focus:border-slate-500'}
+                    ${errors[id] ? 'border-rose-500' : 'border-gray-300'}
+                    ${errors[id] ? 'focus:border-rose-500' : 'focus:border-gray-300'}
                 `}
 
             />

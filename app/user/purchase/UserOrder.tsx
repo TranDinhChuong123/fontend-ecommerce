@@ -6,11 +6,12 @@ import handleApiCall from '@/services/handleApiCall';
 import React, { useEffect, useState } from 'react'
 import ItemOrder from './ItemOrder';
 import RenderIf from '@/utils/RenderIf';
-import { formatPrice } from '@/utils/util';
+import { formatPrice, showToastError } from '@/utils/util';
 import { useRouter } from 'next/navigation';
 import { TbReportSearch } from "react-icons/tb";
 import { MdOutlineUpdate } from "react-icons/md";
 import SideBar from '../SideBar';
+import LoadingComponent from '@/app/components/common/LoadingComponent';
 interface Props {
     status: string | undefined
     currentUser: string | undefined
@@ -33,13 +34,16 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
             const response = await handleApiCall(axios.post(`/order/re-order`, {
                 orderId
             }));
+            console.log("response", response);
+            
 
-            if (!response) {
+            if (response.status !== 200  && !response.data ) {
                 throw new Error("Error updating cart checked status");
             }
-            return true; // Trả về true nếu thành công
+            return true; 
         } catch (error: any) {
             console.error(error.message);
+            showToastError("Mua lại không thành công ");
             return false; // Trả về false nếu có lỗi
         }
     };
@@ -51,6 +55,17 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
         }
         getUserOrderPeding();
     }, [selectedOrder == "pending"]);
+    useEffect(() => {
+        const getUserOrderPeding = async () => {
+            const res = await handleApiCall(axios.get(`/user/status-orders/SHIPPING`));
+            console.log("res", res);
+            
+            setOrderWaitingForDelivery(res?.data || []);
+
+        }
+        getUserOrderPeding();
+    }, [selectedOrder == "waiting_for_delivery"]);
+
 
     useEffect(() => {
         const getUserOrderPeding = async () => {
@@ -114,28 +129,21 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
 
 
     if (isLoading) {
-        return (
-            <div className='flex flex-col items-center'>
-                <div className='text-xl mt-10 text-slate-400 flex flex-row items-center gap-2'>
-                    <MdOutlineUpdate size={20} />
-                    loading...
-                </div>
-            </div>
-        );
+        <LoadingComponent />
     }
 
     return (
         <div className='w-full'>
 
-            <div className='bg-slate-50 border px-16 py-4 w-[100%]'>
+            <div className='bg-slate-50 border px-16 py-4 w-[100%] min-h-screen'>
                 <div className='flex flex-row gap-2 w-full justify-center text-slate-700 mb-5'>
-                    <button
+                    {/* <button
                         className={` py-2 px-4  
                         ${selectedOrder === "all" && "border-b-2 border-slate-700"}`}
                         onClick={() => handleButtonClick("all")}
                     >
                         Tất cả
-                    </button>
+                    </button> */}
 
                     <button
                         className={` py-2 px-4  
@@ -150,7 +158,7 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
                         ${selectedOrder === "waiting_for_delivery" && "border-b-2 border-slate-700"}`}
                         onClick={() => handleButtonClick("waiting_for_delivery")}
                     >
-                        Chờ giao hàng
+                        Đang giao hàng
                     </button>
 
                     <button
@@ -369,9 +377,9 @@ const UserOrder: React.FC<Props> = ({ status, currentUser }) => {
                         return (
                             <div key={order.id} className='relative hover:cursor-pointer border px-8 shadow-md rounded-md mb-4'
                             >
-                                <div onClick={() => router.push(`/user/purchase/return?orid=${order.id}`)}>
+                                <div onClick={() => router.push(`/user/purchase/order?orid=${order.id}`)}>
                                     <div className='flex flex-row justify-end'>
-                                        <h1 className='text-xl py-2 font-light'>Đã hoàn tiền</h1>
+                                        <h1 className='text-xl py-2 font-light'>Đang giao hàng</h1>
                                     </div>
                                     {order.orderProducts.map((orderProduct: any) => (
                                         <ItemOrder

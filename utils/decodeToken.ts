@@ -9,8 +9,13 @@ interface JwtPayload {
 }
 
 const decodeToken = (token: string) => {
-    const decoded: JwtPayload = jwtDecode<JwtPayload>(token);
-    return decoded;
+    try {
+        const decoded: JwtPayload = jwtDecode<JwtPayload>(token);
+        return decoded;
+    } catch (error) {
+        console.error("Invalid token:", error);
+        return null;
+    }
 };
 
 export default decodeToken;

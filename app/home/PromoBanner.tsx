@@ -1,10 +1,16 @@
-const PromoBanner = () => {
-    return (
-      <div className="w-full bg-yellow-300 py-6 text-center text-black font-semibold text-lg">
-        🌟 Ưu đãi khủng 50% cho đơn hàng đầu tiên! 🌟
-      </div>
-    );
-  };
-  
-  export default PromoBanner;
-  
+'use client'
+
+interface Props {
+  label: string,
+  color: string
+}
+
+const PromoBanner: React.FC<Props> = ({ color, label }) => {
+  return (
+    <div className={`w-full ${color} py-6 my-10 text-center text-blue-600 font-semibold text-lg`}>
+      🌟 {label}🌟
+    </div>
+  );
+};
+
+export default PromoBanner;

@@ -1,5 +1,5 @@
-import Button from "@/app/components/Button";
-import Heading from "@/app/components/Heading";
+import Button from "@/app/components/common/Button";
+import Heading from "@/app/components/common/Heading";
 import Input from "@/app/components/inputs/Input";
 import { FC } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
@@ -25,7 +25,7 @@ const PasswordForm: FC = () => {
             return;
         }
 
-        
+
         toast.success("Thiết lập mật khẩu thành công!");
     };
 

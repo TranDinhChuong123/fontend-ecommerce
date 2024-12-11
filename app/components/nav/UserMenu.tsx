@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useState } from 'react'
-import Avatar from '../Avatar'
+import Avatar from '../common/Avatar'
 import { AiFillCaretDown } from 'react-icons/ai'
 import MenuItem from './MenuItem'
 import Link from 'next/link'
@@ -13,10 +13,11 @@ import { truncateText } from '@/utils/util'
 import AuthForm from '@/app/components/auth/AuthForm'
 
 interface UserMenuProps {
-  currentUser: any | null
+  currentUser: any | null,
+  avatar?: string | any,
 }
 
-const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+const UserMenu: React.FC<UserMenuProps> = ({ currentUser, avatar }) => {
 
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -30,7 +31,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     setIsOpenModal((prev) => !prev)
   }, [])
 
-  console.log("currentUser", currentUser);
 
   return (
     <div className='relative z-30'>
@@ -40,7 +40,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         rounded-full cursor-pointer hover:shadow-md
         transition text-slate-700 border-[1px] h-10'
       >
-        <Avatar />
+        <Avatar src={avatar || ''}/>
         <p className='text-sm'>{truncateText(currentUser || '', 10)}</p>
         <AiFillCaretDown size={10} />
       </div>
@@ -54,7 +54,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
           {currentUser ? (
             <div>
 
-              <Link href="orders">
+              <Link href="/user/profile">
                 <MenuItem onClick={toggleOpen}>
                   Tài khoản của tôi
                 </MenuItem>

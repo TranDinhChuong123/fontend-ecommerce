@@ -1,22 +1,20 @@
 'use client'
 
-import Link from 'next/link'
-import Container from '../Container'
-import React, { useState } from 'react'
-import { Redressed } from "next/font/google"
-import CartCount from './CartCount';
-import UserMenu from './UserMenu';
-import getCurrentUser from '@/actions/getCurrentUser';
-const redressed = Redressed({ subsets: ["latin"], weight: ['400'] });
-import { FcShop } from "react-icons/fc";
-import RenderIf from '@/utils/RenderIf';
-import { CiSearch } from "react-icons/ci";
-import { signOut, useSession } from 'next-auth/react'
 import handleApiCall from '@/services/handleApiCall'
-
-import axios from '@/services/axios/publicAxios';
-import { useRouter } from 'next/navigation'
+import RenderIf from '@/utils/RenderIf'
+import { useSession } from 'next-auth/react'
+import { Redressed } from "next/font/google"
+import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
+import { CiSearch } from "react-icons/ci"
+import { FcShop } from "react-icons/fc"
+import CartCount from './CartCount'
+import UserMenu from './UserMenu'
+const redressed = Redressed({ subsets: ["latin"], weight: ['400'] });
+import useAxiosAuth from '@/hooks/useAxiosAuth'
 import decodeToken from '@/utils/decodeToken'
+import { useRouter } from 'next/navigation'
+import useProfile from '@/hooks/useProfile'
 
 interface Props {
   isPageHome?: boolean
@@ -28,18 +26,13 @@ interface Props {
   valueSearch?: string
 }
 const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, query, onSearch, isPageHome, valueSearch = '' }) => {
-
-
+  const axiosAuth = useAxiosAuth();
+  const { profile } = useProfile()
   const { data: session } = useSession();
-  console.log("session", session);
   let decode;
   if (session?.user?.accessToken) {
     decode = decodeToken(session?.user?.accessToken || " ")
-    console.log("decode", decode);
   }
-
-
-
   const router = useRouter()
   const [inputValue, setInputValue] = useState<string>(valueSearch || '');
 
@@ -78,23 +71,28 @@ const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, que
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className='focus:outline-none w-full rounded-full px-4 py-2' />
-                <RenderIf isTrue={isPageHome || false}>
+                <button
+                  onClick={() => inputValue ? router.push('/search?keyword=' + inputValue) : {}}
+                  className='bg-teal-700 text-white px-3 py-2 rounded-r-full font-light w-[170px]'>
+                  Tìm kiếm
+                </button>
+                {/* <RenderIf isTrue={isPageHome || false}>
                   <button
                     onClick={() => inputValue ? router.push('/search?keyword=' + inputValue) : {}}
                     className='bg-teal-700 text-white px-3 py-2 rounded-r-full font-light w-[170px]'>
                     Tìm kiếm
                   </button>
-                </RenderIf>
+                </RenderIf> */}
 
 
 
-                <RenderIf isTrue={!isPageHome}>
+                {/* <RenderIf isTrue={!isPageHome}>
                   <button
                     onClick={inputValue ? handleSearch : () => { }}
                     className='bg-teal-700 text-white px-3 py-2 rounded-r-full font-light w-[170px]'>
                     Tìm kiếm
                   </button>
-                </RenderIf>
+                </RenderIf> */}
 
               </div>
               {/* <div className='flex flex-row items-center gap-8 mt-5 text-slate-500 '>
@@ -113,43 +111,48 @@ const NavBar: React.FC<Props> = ({ label, sticky = false, notIsCart = false, que
                 </Link>
 
               </div> */}
-              <div className="flex flex-wrap items-center gap-6 mt-5 text-slate-500">
-                <Link
-                  className={`${query === 'san-pham-moi' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
-                    } transition-all duration-300 ease-in-out`}
-                  href="/collections?q=san-pham-moi"
-                >
-                  SẢN PHẨM MỚI
-                </Link>
-                <Link
-                  className={`${query === 'san-pham-sale' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
-                    } transition-all duration-300 ease-in-out`}
-                  href="/collections?q=san-pham-sale"
-                >
-                  SẢN PHẨM SALE
-                </Link>
-                <Link
-                  className={`${query === 'san-pham-ban-chay' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
-                    } transition-all duration-300 ease-in-out`}
-                  href="/collections?q=san-pham-ban-chay"
-                >
-                  SẢN PHẨM BÁN CHẠY
-                </Link>
-                <Link
-                  className={`${query === 'san-pham-gia-tot' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
-                    } transition-all duration-300 ease-in-out`}
-                  href="/collections?q=san-pham-gia-tot"
-                >
-                  SẢN PHẨM GIÁ TỐT
-                </Link>
-              </div>
+              <RenderIf isTrue={isPageHome || false}>
+                <div className="flex flex-wrap items-center gap-6 mt-5 text-slate-500">
+                  <Link
+                    className={`${query === 'san-pham-moi' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                      } transition-all duration-300 ease-in-out`}
+                    href="/collections?q=san-pham-moi"
+                  >
+                    SẢN PHẨM MỚI
+                  </Link>
+                  <Link
+                    className={`${query === 'san-pham-sale' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                      } transition-all duration-300 ease-in-out`}
+                    href="/collections?q=san-pham-sale"
+                  >
+                    SẢN PHẨM SALE
+                  </Link>
+                  <Link
+                    className={`${query === 'san-pham-ban-chay' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                      } transition-all duration-300 ease-in-out`}
+                    href="/collections?q=san-pham-ban-chay"
+                  >
+                    SẢN PHẨM BÁN CHẠY
+                  </Link>
+                  <Link
+                    className={`${query === 'san-pham-gia-tot' ? 'text-slate-700 underline font-semibold' : 'hover:text-teal-700'
+                      } transition-all duration-300 ease-in-out`}
+                    href="/collections?q=san-pham-gia-tot"
+                  >
+                    SẢN PHẨM GIÁ TỐT
+                  </Link>
+                </div>
+              </RenderIf>
 
             </div>
             <div className='flex items-center gap-3 md:gap-12'>
               <RenderIf isTrue={!notIsCart}>
                 <CartCount />
               </RenderIf>
-              <UserMenu currentUser={session?.user.name || decode?.sub} />
+              <UserMenu
+                avatar={profile?.image || session?.user?.image || session?.user?.picture}
+                currentUser={profile?.name || session?.user.name || decode?.sub}
+              />
             </div>
           </div>
         </div>

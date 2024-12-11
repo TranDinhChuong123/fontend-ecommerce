@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-ecommerce-2-7wzc.onrender.com/api/v1';
+const baseURL = process.env.NEXT_PUBLIC_API_URL ;
 const authAxiosInstance = axios.create({
     baseURL: baseURL,
     timeout: 10000,

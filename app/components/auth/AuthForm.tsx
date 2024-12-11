@@ -7,9 +7,9 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { FaFacebook } from 'react-icons/fa'
 import GoogleIcon from "@/public/google-icon.png"
-import Heading from "../Heading"
+import Heading from "../common/Heading"
 import Input from "../inputs/Input"
-import Button from "../Button"
+import Button from "../common/Button"
 import { MdOutlineCancel } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 interface AuthFormProps {

@@ -1,11 +1,12 @@
 'use client'
 
 import React from 'react'
-import Container from '../Container'
+
 import Link from 'next/link'
 import AdminNavItem from './AdminNavItem'
 import { MdDashboard, MdDns, MdFormatListBulleted, MdLibraryAdd } from 'react-icons/md'
 import { usePathname } from 'next/navigation'
+import Container from '../../common/Container'
 
 const AdminNav = () => {
     const pathName = usePathname()
