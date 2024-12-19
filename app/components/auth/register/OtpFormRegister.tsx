@@ -8,6 +8,7 @@ import axios from '@/services/axios/publicAxios';
 import { showToastError, showToastSuccess } from '@/utils/util';
 import { fetchRegisterUserAPI } from '@/services/authService';
 import { useRouter } from 'next/navigation';
+import { log } from 'node:console';
 interface OtpFormProps {
     user: any;
 }
@@ -42,6 +43,7 @@ const OtpFormRegiter: React.FC<OtpFormProps> = ({ user }) => {
     const handleSubmit = async () => {
         console.log("otp", otp);
         const result = Number(otp.join(''));
+    
 
         try {
             const res = await axios.post(`/auth/verify-code?email=${user.email}&code=${result}`);

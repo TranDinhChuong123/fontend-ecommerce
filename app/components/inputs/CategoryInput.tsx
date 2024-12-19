@@ -1,10 +1,11 @@
 
+import Image from "next/image";
 import { IconType } from "react-icons";
 
 interface CategoryInputProps {
     selected?: boolean;
     label: string;
-    icon: IconType;
+    imageUrl: string;
     onClick: (value: string) => void;
     slug: string;
 }
@@ -12,7 +13,7 @@ interface CategoryInputProps {
 const CategoryInput: React.FC<CategoryInputProps> = ({
     selected,
     label,
-    icon: Icon,
+    imageUrl,
     onClick,
     slug
 }) => {
@@ -25,7 +26,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
             onClick={() => onClick(slug)}
         >
             <div className={`transition-all ${selected ? 'text-blue-500' : 'text-slate-600'}`}>
-                <Icon size={24} />
+                <Image src={imageUrl || ''} alt={label} width={50} height={50}  />
             </div>
             <div className={`font-semibold text-sm ${selected ? 'text-blue-500' : 'text-slate-600'}`}>
                 {label}

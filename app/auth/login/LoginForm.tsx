@@ -1,19 +1,16 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import Heading from "../../components/common/Heading"
 import Input from "../../components/inputs/Input"
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form"
 import Button from "../../components/common/Button"
 import Link from "next/link"
-import { AiOutlineGoogle } from "react-icons/ai"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast";
 import { FaGoogle, FaFacebook } from 'react-icons/fa'
 import GoogleIcon from "@/public/google-icon.png"
 import decodeToken from "@/utils/decodeToken"
-import getCurrentUser from "@/actions/getCurrentUser"
 import { showToastError } from "@/utils/util"
 
 
@@ -85,7 +82,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     if (currentUser) {
         return <p className="text-center">Logged in. Redirecting...</p>
     }
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    // const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     return (
         <>
             <div className="flex flex-col items-center space-y-2 text-center">
@@ -149,14 +146,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
                 <Button
                     label="Google"
                     imageIcon={{ src: GoogleIcon, alt: "Google Icon" }}
-                    onClick={() => signIn('google', { callbackUrl: '/' })}
+                    onClick={() => signIn('google', { callbackUrl: process.env.NEXTAUTH_URL })}
                     small
                     outline
                 />
                 <Button
                     label="Facebook"
                     icon={FaFacebook}
-                    onClick={() => signIn('facebook', { callbackUrl: '/' })}
+                    onClick={() => signIn('facebook', { callbackUrl: process.env.NEXTAUTH_URL })}
                     small
                     outline
                     styleIcon="text-blue-600"

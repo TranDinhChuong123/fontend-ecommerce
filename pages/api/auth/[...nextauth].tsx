@@ -32,7 +32,7 @@ export const authOptions: AuthOptions = {
                     throw new Error("Invalid phoneNumber or password");
                 }
                 console.log("resData", resData);
-                
+
                 return resData;
             }
         })
@@ -47,6 +47,9 @@ export const authOptions: AuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        async redirect({ url, baseUrl }) {
+            return url.startsWith(baseUrl) ? url : `${baseUrl}/auth/login`;
+        },
         async session({ session, token, user }) {
             session.user = token as any
             return session;

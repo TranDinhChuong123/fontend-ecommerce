@@ -5,10 +5,11 @@ import Input from "@/app/components/inputs/Input";
 import TextArea from "@/app/components/inputs/TextArea";
 import useAxiosAuth from "@/hooks/useAxiosAuth";
 import handleApiCall from "@/services/handleApiCall";
-import { categories } from "@/utils/Categories";
+
 import { createSlug, formatPrice, showToastError, showToastSuccess } from "@/utils/util";
 import Image from "next/image";
-import { useState } from "react";
+import { AnyARecord } from "node:dns";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { MdUpload } from "react-icons/md";
 
@@ -37,6 +38,20 @@ const AddProductPage = () => {
     const [capacityValue, setCapacityValue] = useState("");
     const [sizeValue, setSizeValue] = useState("");
     const [priceValue, setPriceValue] = useState("");
+    const [categories, setCategories] = useState([]);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await handleApiCall(axios.get('/category/status/ACTIVE'));
+            console.log('response', response);
+            setCategories(response?.data || []);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+    useEffect(() => {
+        fetchCategories();
+    }, []);
     const {
         register,
         handleSubmit,
@@ -155,7 +170,8 @@ const AddProductPage = () => {
             shouldValidate: true
         })
     }
-
+    console.log("categorys", categories);
+    
 
     return (
         <div className="flex flex-col items-center justify-center gap-6 p-6 bg-gray-50 min-h-screen">
@@ -169,11 +185,11 @@ const AddProductPage = () => {
                 <div>
                     <div className="mb-4 font-semibold text-gray-700">Chọn loại sản phẩm</div>
                     <div className="flex flex-wrap gap-4">
-                        {categories.map((item) => (
+                        {categories.map((item: any) => (
                             <div key={item.lable} className="flex-shrink-0">
                                 <CategoryInput
-                                    icon={item.icon}
-                                    label={item.lable}
+                                    imageUrl={item.imageUrl}
+                                    label={item.name}
                                     selected={category === item.slug}
                                     onClick={(category) => setCustomValue('category', category)}
                                     slug={item.slug}

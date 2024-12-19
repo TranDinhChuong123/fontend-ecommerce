@@ -3,15 +3,19 @@
 import useAxiosAuth from "@/hooks/useAxiosAuth";
 import handleApiCall from "@/services/handleApiCall";
 import RenderIf from "@/utils/RenderIf";
-import { showToastError, showToastSuccess } from "@/utils/util";
+import { createSlug, showToastError, showToastSuccess } from "@/utils/util";
 import { DataGrid } from "@mui/x-data-grid";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MdUpload } from "react-icons/md";
+import Switch from '@mui/material/Switch';
+import { log } from "node:console";
+import { useRouter } from "next/navigation";
 
 
 const CategoryManagementPage = () => {
     const [categories, setCategories] = useState([]);
+    const router = useRouter()
     const [isFormOpen, setIsFormOpen] = useState(false); // Trạng thái hiển thị form
     const [newCategory, setNewCategory] = useState({
         name: '',
@@ -66,7 +70,7 @@ const CategoryManagementPage = () => {
 
             const dataCategory = {
                 name: newCategory.name,
-                slug: newCategory.slug,
+                slug: createSlug(newCategory.name),
                 imageUrl: resImages?.data[0],
                 status: newCategory.status,
             };
@@ -94,7 +98,25 @@ const CategoryManagementPage = () => {
             setPreviewImage(previewUrl);
         }
     };
+    const handleToggleChange = async (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+        const status = event.target.checked;
+        console.log("status", status);
+        console.log("id", id);
 
+        const dataCategory = {
+            status: status ? 'ACTIVE' : 'INACTIVE',
+        };
+        console.log("dataCategory", dataCategory);
+        const response = await handleApiCall(axios.put(`/category/update-status/${id}`, {
+            status: status ? 'ACTIVE' : 'INACTIVE'  
+        }));
+
+        console.log("response", response);
+        fetchCategories();
+        
+
+
+    }
     const columns = [
         { field: 'id', headerName: 'ID', flex: 1 },
         { field: 'name', headerName: 'Tên loại sản phẩm', flex: 2 },
@@ -127,7 +149,48 @@ const CategoryManagementPage = () => {
                 );
             }
         },
-        { field: 'status', headerName: 'Trạng thái', flex: 1 },
+        {
+            field: 'status',
+            headerName: 'Trạng thái',
+            flex: 1,
+            renderCell: (params: any) => {
+
+                const status = params.value;
+                let color;
+                if (status === 'ACTIVE') {
+                    color = 'green';
+                } else if (status === 'INACTIVE') {
+                    color = 'red';
+                }
+
+                return (
+                    <div
+                        style={{
+                            color: color,
+                            fontWeight: 'bold',
+                            padding: '2px 2px',
+
+                            cursor: 'pointer',
+                            borderRadius: '5px',
+                            textAlign: 'center'
+                        }}
+                    >
+                        {status?.toLowerCase()}
+                    </div>
+                );
+            },
+        },
+        {
+            field: 'Kích hoạt trạng thái',
+            headerName: 'Kích hoạt trạng thái',
+            flex: 2,
+            renderCell: (params: any) => {
+                return (
+                    <Switch checked={params.row.status === 'ACTIVE'} onChange={(e) => handleToggleChange(e, params.row.id)} />
+                );
+            }
+
+        },
     ];
 
     return (
@@ -198,17 +261,7 @@ const CategoryManagementPage = () => {
                                     />
                                 </div>
 
-                                <div className="mb-5">
-                                    <label className="block text-sm font-medium text-gray-600">Slug:</label>
-                                    <input
-                                        type="text"
-                                        name="slug"
-                                        value={newCategory.slug}
-                                        onChange={handleInputChange}
-                                        className="w-full mt-2 px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
+
 
                                 <div className="mb-5">
                                     <label className="block text-sm font-medium text-gray-600">Trạng thái:</label>

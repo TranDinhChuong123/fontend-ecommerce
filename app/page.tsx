@@ -53,7 +53,7 @@ export default async function Home() {
 
           <HomeBanner />
 
-          <RenderIf isTrue={productsDIscount.length > 0}>
+          <RenderIf isTrue={productsDIscount?.length > 0}>
             <div className="flex flex-col items-center py-5 gap-4">
               <p className='font-bold text-xl text-slate-600'> SẢN PHẨM NỔI BẬT</p>
               <hr className="w-[50%]" />
@@ -103,7 +103,7 @@ export default async function Home() {
             gap-8
           ">
             <RenderIf isTrue={products.length > 0}>
-              {products.map((product: any) => (
+              {products?.map((product: any) => (
                 <ProductCard key={product?.id} product={product} />
               ))}
             </RenderIf>

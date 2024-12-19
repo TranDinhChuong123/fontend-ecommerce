@@ -31,6 +31,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser, avatar }) => {
     setIsOpenModal((prev) => !prev)
   }, [])
 
+  
 
   return (
     <div className='relative z-30'>
@@ -66,7 +67,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser, avatar }) => {
               </Link>
 
               <MenuItem onClick={() => {
-                signOut({ callbackUrl: '/auth/login' });
+                signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/auth/login` });
               }}>
                 Đăng xuất
               </MenuItem>

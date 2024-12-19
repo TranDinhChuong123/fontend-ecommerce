@@ -262,16 +262,16 @@ const AdminSideBar = () => {
 
 
 
-                       
+
                     </div>
                 )}
             </div>
-            
+
             <div className="w-full">
                 <button
                     className={`${selectedSidebarItem === 'logout' ? 'bg-[#425270] text-white' : null} flex items-center justify-between w-full px-5 py-2 rounded-sm`}
                     onClick={() => {
-                        signOut({ callbackUrl: '/auth/login' });
+                        signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/auth/login` });
                     }}
                 >
                     <div className="flex items-center gap-1">
